@@ -62,8 +62,8 @@ echo "- MongoDB is running on mongodb://localhost:27019"
 echo "Restoring webview database ..."
 mongorestore --port 27019 --db webview --gzip "${DATABASE_RESULT_DIR}/webview-backup/webview"
 
-#echo "Restoring dynamic API calls ..."
-#mongorestore --port 27019 --db webview --gzip "${DATABASE_RESULT_DIR}/webview-dynamic-backup/webview"
+echo "Restoring dynamic API calls ..."
+mongorestore --port 27019 --db webview --gzip "${DATABASE_RESULT_DIR}/webview-dynamic-backup/webview"
 
 echo "Restoring network logs ..."
 mongorestore --port 27019 --db webview --gzip "${DATABASE_RESULT_DIR}/webview-network-backup/webview"
