@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTTP Page</title>
+  <script src="http://mixed-content.test/static/script.js"></script>
+  <link rel="stylesheet" href="http://mixed-content.test/static/style.css">
+  <!-- base url-->
+   <base href="http://mixed-content.test/">
+</head>
+<body>
+  <h1>Served over HTTP</h1>
+  <script>
+    // check if secure context
+    if (window.isSecureContext) {
+      document.write("<p>This is a secure context.</p>");
+    } else {
+      document.write("<p>This is NOT a secure context.</p>");
+    }
+    // write the origin here
+    document.write("<p>Origin: " + window.location.origin + "</p>");
+  </script>
+
+  <h1>Upgradable Content</h1>
+
+  <h2>Image src</h2>
+  <img src="/static/image.png" alt="HTTPS image">
+  <p>If you see HTTP, it is served over HTTP</p>
+
+  <!-- CSS Images -->
+
+  <h2>Video src</h2>
+  <video src="/static/video.mp4" controls>
+    Your browser does not support the video tag.
+  </video>
+  <p>If you see the earth, it is served over HTTP</p>
+  
+  <h2>Audio src</h2>
+  <audio src="/static/audio.mp3" controls>
+    Your browser does not support the audio element.
+  </audio>
+  <p>If you hear a Miaow, it is served over HTTP</p>
+
+  <h2>Audio source</h2>
+  <audio controls>
+    <source src="/static/audio.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <p>If you hear a Miaow, it is served over HTTP</p>
+  
+
+  <h2>Video source</h2>
+  <video controls>
+    <source src="/static/video.mp4">
+    Your browser does not support the video tag.
+  </video>
+  <p>If you see the earth, it is served over HTTP</p>
+
+  <hr>
+
+  <h1>Blockable Content</h1>
+
+  <h2>Script src</h2>
+
+  <p id="script">No script was loaded</p>
+
+  <h2>Link href stylesheet</h2>
+
+  <p id="style">If this is red, it is served over HTTP. If it is green, it is served over HTTPS. If it is black, it is blocked.</p>
+
+
+
+  <h2>iframe src</h2>
+
+  <iframe src="http://mixed-content.test/redir" width="600" height="400"></iframe>
+  <p>If you see 'served over HTTP' in the iframe, it is served over HTTP. If you see 'served over HTTPS', it is served over HTTPS. Otherwise, it is blocked.</p>
+  
+  
+  
+  <!-- fetch request -->
+
+  <h2>Fetch</h2>
+   <p id="fetch">No fetch result yet</p>
+   <script>
+    fetch("/static/text.txt")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("fetch").textContent = 
+          "Fetch succeeded over: " + data;
+      })
+      .catch(err => {
+        document.getElementById("fetch").textContent = 
+          "Fetch blocked or failed: " + err;
+      });
+  </script>
+
+
+  <!-- XMLHttpRequest -->
+   <h2>XMLHttpRequest</h2>
+   <p id="xhr">No XHR result yet</p>
+  <script>
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/static/text.txt", true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        document.getElementById("xhr").textContent =
+          "XHR succeeded over: " + xhr.responseText;
+      } else {
+        document.getElementById("xhr").textContent =
+          "XHR failed with status: " + xhr.status;
+      }
+    };
+    xhr.onerror = function() {
+      document.getElementById("xhr").textContent = "XHR blocked or network error";
+    };
+    xhr.send();
+  </script>
+
+  <!-- CSS URL -->
+   <h2>CSS URL background-image</h2>
+  <div id="css-url-test" style="width:200px; height:100px; border:1px solid black;">
+    CSS background test
+  </div>
+  <style>
+    #css-url-test {
+      background-image: url("/static/image.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  </style>
+  <p>If the box shows an HTTP image, it is served over HTTP. If it shows an HTTPS image, it is served over HTTPS. If it is blank, it is blocked.</p>
+
+    <h2>Object data attribute</h2>
+  <object data="/redir" width="400" height="200"></object>
+  <p>If you see 'served over HTTP' in the iframe, it is served over HTTP. If you see 'served over HTTPS', it is served over HTTPS. Otherwise, it is blocked.</p>
+
+  <h2>Navigator sendBeacon url</h2>
+  <p id="beacon">Beacon not sent yet</p>
+  <script>
+    let beaconData = new Blob(["Beacon test data"], { type: "text/plain" });
+    let sent = navigator.sendBeacon("static/beacon", beaconData);
+    document.getElementById("beacon").textContent = sent
+      ? "Beacon send attempted over HTTP"
+      : "Beacon send failed (blocked or not supported)";
+  </script>
+
+  <h2>Image srcset</h2>
+  <img 
+    src="/static/image.png"
+    srcset="
+      /static/image-small.png 300w
+    "
+    sizes="(max-width: 600px) 300px"
+    alt="HTTP srcset test">
+  <p>If the image displays red, one of the srcset candidates was loaded over HTTP. If it displays green, it was loaded over HTTPS. If it is blank, it was blocked.</p>
+
+  <h2>Web font</h2>
+  <style>
+    @font-face {
+    font-family: 'CustomFont';
+    font-style: italic;
+    font-weight: 300;
+    font-display: swap;
+    src: url("/static/font.woff2") format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+    #font {
+      font-family: "CustomFont", sans-serif;
+      font-size: 20px;
+    }
+  </style>
+  <p id="font">If you see Comic Sans, it was loaded over HTTP. If you see a colorful font, it was loaded over HTTPS. Otherwise, it was blocked</p>
+  
+
+  <h1>Others</h1>
+  <h2>Links to other pages</h2>
+  <a href="/redir">Link to other page</a>
+</body>
+</html>
+

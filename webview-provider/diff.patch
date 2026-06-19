@@ -1,0 +1,2491 @@
+diff --git a/android_webview/glue/java/src/com/android/webview/chromium/ContentSettingsAdapter.java b/android_webview/glue/java/src/com/android/webview/chromium/ContentSettingsAdapter.java
+index 31a07e79e1360..69ac0e2b236c4 100644
+--- a/android_webview/glue/java/src/com/android/webview/chromium/ContentSettingsAdapter.java
++++ b/android_webview/glue/java/src/com/android/webview/chromium/ContentSettingsAdapter.java
+@@ -27,13 +27,13 @@ public class ContentSettingsAdapter extends android.webkit.WebSettings {
+     private static final String TAG = "WebSettings";
+     private final AwSettings mAwSettings;
+     private PluginState mPluginState = PluginState.OFF;
+-    private int webViewId = -1;
++    private String webViewId = null;
+ 
+     public ContentSettingsAdapter(AwSettings awSettings) {
+         mAwSettings = awSettings;
+     }
+ 
+-    public void setWebViewId(int webViewId) {
++    public void setWebViewId(String webViewId) {
+         this.webViewId = webViewId;
+     }
+ 
+diff --git a/android_webview/glue/java/src/com/android/webview/chromium/CookieManagerAdapter.java b/android_webview/glue/java/src/com/android/webview/chromium/CookieManagerAdapter.java
+index 694b9e441a5eb..04c9774a98687 100644
+--- a/android_webview/glue/java/src/com/android/webview/chromium/CookieManagerAdapter.java
++++ b/android_webview/glue/java/src/com/android/webview/chromium/CookieManagerAdapter.java
+@@ -10,6 +10,8 @@ import android.webkit.WebView;
+ 
+ import com.android.webview.chromium.WebViewChromium.ApiCall;
+ 
++import static com.android.webview.chromium.SharedWebViewChromium.recordWebViewApiCall;
++
+ import org.chromium.android_webview.AwCookieManager;
+ import org.chromium.android_webview.WebAddressParser;
+ import org.chromium.base.Log;
+@@ -24,7 +26,7 @@ import java.net.URISyntaxException;
+ @SuppressWarnings({"deprecation", "NoSynchronizedMethodCheck"})
+ public class CookieManagerAdapter extends CookieManager {
+     private static final String TAG = "CookieManager";
+-    private static final int NONE = -2;
++    private static final String NONE = null;
+ 
+     AwCookieManager mChromeCookieManager;
+ 
+@@ -38,7 +40,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public synchronized void setAcceptCookie(boolean accept) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_ACCEPT_COOKIE, new Object[] {accept});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_ACCEPT_COOKIE, new Object[] {accept});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_SET_ACCEPT_COOKIE")) {
+             WebViewChromium.recordWebViewApiCall(ApiCall.COOKIE_MANAGER_SET_ACCEPT_COOKIE);
+@@ -48,7 +50,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public synchronized boolean acceptCookie() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_ACCEPT_COOKIE, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_ACCEPT_COOKIE, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_ACCEPT_COOKIE")) {
+             WebViewChromium.recordWebViewApiCall(ApiCall.COOKIE_MANAGER_ACCEPT_COOKIE);
+@@ -58,7 +60,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public synchronized void setAcceptThirdPartyCookies(WebView webView, boolean accept) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_ACCEPT_THIRD_PARTY_COOKIES, new Object[] {webView, accept});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_ACCEPT_THIRD_PARTY_COOKIES, new Object[] {webView, accept});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.ApiCall.COOKIE_MANAGER_SET_ACCEPT_THIRD_PARTY_COOKIES")) {
+@@ -70,7 +72,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public synchronized boolean acceptThirdPartyCookies(WebView webView) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_ACCEPT_THIRD_PARTY_COOKIES, new Object[] {webView});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_ACCEPT_THIRD_PARTY_COOKIES, new Object[] {webView});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.COOKIE_MANAGER_ACCEPT_THIRD_PARTY_COOKIES")) {
+@@ -81,7 +83,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void setCookie(String url, String value) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_COOKIE, new Object[] {url, value});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_COOKIE, new Object[] {url, value});
+         if (value == null) {
+             Log.e(TAG, "Not setting cookie with null value for URL: %s", url);
+             return;
+@@ -100,7 +102,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void setCookie(String url, String value, ValueCallback<Boolean> callback) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_COOKIE, new Object[] {url, value, callback});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_COOKIE, new Object[] {url, value, callback});
+         if (value == null) {
+             Log.e(TAG, "Not setting cookie with null value for URL: %s", url);
+             return;
+@@ -120,7 +122,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public String getCookie(String url) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_GET_COOKIE, new Object[] {url});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_GET_COOKIE, new Object[] {url});
+         try {
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_GET_COOKIE")) {
+@@ -140,7 +142,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void removeSessionCookie() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_SESSION_COOKIE, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_SESSION_COOKIE, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.COOKIE_MANAGER_REMOVE_SESSION_COOKIE")) {
+@@ -151,7 +153,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void removeSessionCookies(final ValueCallback<Boolean> callback) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_SESSION_COOKIES, new Object[] {callback});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_SESSION_COOKIES, new Object[] {callback});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.COOKIE_MANAGER_REMOVE_SESSION_COOKIES")) {
+@@ -163,7 +165,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void removeAllCookie() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_ALL_COOKIE, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_ALL_COOKIE, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_REMOVE_ALL_COOKIE")) {
+             WebViewChromium.recordWebViewApiCall(ApiCall.COOKIE_MANAGER_REMOVE_ALL_COOKIE);
+@@ -173,7 +175,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void removeAllCookies(final ValueCallback<Boolean> callback) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_ALL_COOKIES, new Object[] {callback});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_ALL_COOKIES, new Object[] {callback});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_REMOVE_ALL_COOKIES")) {
+             WebViewChromium.recordWebViewApiCall(ApiCall.COOKIE_MANAGER_REMOVE_ALL_COOKIES);
+@@ -183,7 +185,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public synchronized boolean hasCookies() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_HAS_COOKIES, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_HAS_COOKIES, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_HAS_COOKIES")) {
+             WebViewChromium.recordWebViewApiCall(ApiCall.COOKIE_MANAGER_HAS_COOKIES);
+@@ -193,13 +195,13 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public synchronized boolean hasCookies(boolean privateBrowsing) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_HAS_COOKIES, new Object[] {privateBrowsing});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_HAS_COOKIES, new Object[] {privateBrowsing});
+         return mChromeCookieManager.hasCookies();
+     }
+ 
+     @Override
+     public void removeExpiredCookie() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_EXPIRED_COOKIE, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_REMOVE_EXPIRED_COOKIE, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.COOKIE_MANAGER_REMOVE_EXPIRED_COOKIE")) {
+@@ -210,7 +212,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     public void flush() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_FLUSH, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_FLUSH, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.Framework.COOKIE_MANAGER_FLUSH")) {
+             WebViewChromium.recordWebViewApiCall(ApiCall.COOKIE_MANAGER_FLUSH);
+@@ -220,7 +222,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     protected boolean allowFileSchemeCookiesImpl() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_ALLOW_FILE_SCHEME_COOKIES, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_ALLOW_FILE_SCHEME_COOKIES, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.COOKIE_MANAGER_ALLOW_FILE_SCHEME_COOKIES")) {
+@@ -231,7 +233,7 @@ public class CookieManagerAdapter extends CookieManager {
+ 
+     @Override
+     protected void setAcceptFileSchemeCookiesImpl(boolean accept) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_ACCEPT_FILE_SCHEME_COOKIES, new Object[] {accept});
++        recordWebViewApiCall(NONE, ApiCall.COOKIE_MANAGER_SET_ACCEPT_FILE_SCHEME_COOKIES, new Object[] {accept});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.COOKIE_MANAGER_SET_ACCEPT_FILE_SCHEME_COOKIES")) {
+diff --git a/android_webview/glue/java/src/com/android/webview/chromium/SharedWebViewChromium.java b/android_webview/glue/java/src/com/android/webview/chromium/SharedWebViewChromium.java
+index d781b336b520f..da331a8ebb302 100644
+--- a/android_webview/glue/java/src/com/android/webview/chromium/SharedWebViewChromium.java
++++ b/android_webview/glue/java/src/com/android/webview/chromium/SharedWebViewChromium.java
+@@ -21,10 +21,38 @@ import org.chromium.base.metrics.RecordHistogram;
+ import org.chromium.content_public.browser.MessagePayload;
+ import org.chromium.content_public.browser.MessagePort;
+ 
++import com.android.webview.chromium.WebViewChromium;
++
+ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.concurrent.Callable;
+ 
++import java.io.BufferedWriter;
++import java.io.File;
++
++import android.net.Uri;
++
++import java.util.regex.Pattern;
++import java.io.IOException;
++import java.io.FileOutputStream;
++import java.io.FileInputStream;
++
++import java.io.InputStream;
++import java.lang.reflect.Field;
++import java.util.Map;
++import java.util.concurrent.Callable;
++import java.util.concurrent.Executor;
++import org.json.JSONArray;
++import org.json.JSONException;
++import org.json.JSONObject;
++
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++
++import android.content.Context;
++import android.content.res.AssetManager;
++import android.util.Log;
++
+ /**
+  * This class contains the parts of WebViewChromium that should be shared between the webkit-glue
+  * layer and the support library glue layer.
+@@ -43,15 +71,24 @@ public class SharedWebViewChromium {
+     private WebViewClient mWebViewClient = sNullWebViewClient;
+     private WebChromeClient mWebChromeClient;
+ 
+-    private int webViewId = -1;
++    private final String id;
++    private String frameworkWebViewId;
++    private String supportLibWebViewId;
+ 
+     public SharedWebViewChromium(WebViewChromiumRunQueue runQueue, WebViewChromiumAwInit awInit) {
+         mRunQueue = runQueue;
+         mAwInit = awInit;
++        this.id = java.util.UUID.randomUUID().toString();
++    }
++
++    public void setFrameworkWebViewId(String id) {
++        this.frameworkWebViewId = id;
++        recordInit("framework", id, "shared", this.id);
+     }
+ 
+-    public void setWebViewId(int webViewId) {
+-        this.webViewId = webViewId;
++    public void setSupportLibWebViewId(String id) {
++        this.supportLibWebViewId = id;
++        recordInit("support_lib", id, "shared", this.id);
+     }
+ 
+     void setWebViewClient(WebViewClient client) {
+@@ -271,4 +308,283 @@ public class SharedWebViewChromium {
+         }
+         return badPatterns;
+     }
++
++
++
++
++
++
++
++
++
++
++
++
++
++    private static JSONArray serializeTrace(StackTraceElement[] stackTrace) {
++        JSONArray traceArray = new JSONArray();
++        for (StackTraceElement element : stackTrace) {
++            traceArray.put(element.toString());
++        }
++        return traceArray;
++    }
++
++    private static JSONArray serializeArray(Object array) {
++        JSONArray jsonArray = new JSONArray();
++        int length = java.lang.reflect.Array.getLength(array);
++        for (int i = 0; i < length; i++) {
++            jsonArray.put(serializeObject(java.lang.reflect.Array.get(array, i)));
++        }
++        return jsonArray;
++    }
++
++    private static JSONArray serializeCollection(java.util.Collection<?> collection) {
++        JSONArray jsonArray = new JSONArray();
++        for (Object item : collection) {
++            jsonArray.put(serializeObject(item));
++        }
++        return jsonArray;
++    }
++
++    private static Object serializeObject(Object object) {
++        if (object == null) {
++            return JSONObject.NULL;
++        } else if (object instanceof String) {
++            return JSONObject.quote((String) object);
++        } else if (object.getClass().isArray()) {
++            return serializeArray(object);
++        } else if (object instanceof Number || object instanceof Boolean) {
++            return object;
++        } else if (object instanceof java.util.Collection) {
++            return serializeCollection((java.util.Collection<?>) object);
++        } else {
++            return JSONObject.quote(object.toString());
++        }
++    }
++
++    private static JSONArray serializeParams(Object[] params) {
++        JSONArray jsonArray = new JSONArray();
++        for (Object param : params) {
++            jsonArray.put(serializeObject(param));
++        }
++        return jsonArray;
++    }
++
++    public static void recordInit(String firstName, String firstCode, String secondName, String secondCode) {
++        JSONObject jsonLog = new JSONObject();
++        try {
++            jsonLog.put("init", true);
++            jsonLog.put("from", firstName);
++            jsonLog.put("id_first", firstCode);
++            jsonLog.put("to", secondName);
++            jsonLog.put("id_second", secondCode);
++        } catch (JSONException e) {
++            e.printStackTrace();
++        }
++        Log.i("33WV_API_CALL44", jsonLog.toString());
++    }
++
++    public static void recordSupportLibApiCall(String id, int sample, Object[] parameters) {
++        recordWebViewApiCall("support-lib" + id, sample, parameters);
++    }
++
++    public static void recordWebViewApiCall(String id, int sample, Object[] parameters) {
++        java.lang.StackTraceElement[] stackTrace = java.lang.Thread.currentThread().getStackTrace();
++
++        Context context = org.chromium.base.ContextUtils.getApplicationContext();
++
++        // delete all until com.android.webview has ended (this is not necessarily the firs)
++        int startIndex = 0;
++        boolean started = false;
++        for (int i = 0; i < stackTrace.length; i++) {
++            if (stackTrace[i].getClassName().startsWith("com.android.webview")) {
++                started = true;
++            } else if (started) {
++                startIndex = i;
++                break;
++            }
++        }
++
++        stackTrace = java.util.Arrays.copyOfRange(stackTrace, startIndex, stackTrace.length - 1);
++
++        // check if the stack Trace starts with calls to android.webkit. and remove them if so
++        while (stackTrace.length > 0 && stackTrace[0].getClassName().startsWith("android.webkit.")) {
++            stackTrace = java.util.Arrays.copyOfRange(stackTrace, 1, stackTrace.length);
++        }
++
++        JSONArray traceArray = serializeTrace(stackTrace);
++        JSONArray paramsArray = serializeParams(parameters);
++
++        JSONObject jsonLog = new JSONObject();
++        try {
++            jsonLog.put("webview_id", id);
++            jsonLog.put("package", context.getPackageName());
++            jsonLog.put("api_id", sample);
++            jsonLog.put("params", paramsArray);
++            jsonLog.put("trace", traceArray);
++        } catch (JSONException e) {
++            e.printStackTrace();
++        }
++
++        String logString = jsonLog.toString();
++
++        if (logString.length() > 3900) {
++            String uuid = java.util.UUID.randomUUID().toString();
++            writeFileUsingOutputStream(context, logString, "33file44-" + uuid);
++            Log.i("33WV_API_CALL44", "33filedump44-" + sample + "-33file44-" + uuid + "_" + context.getPackageName());
++        } else {
++            Log.i("33WV_API_CALL44", logString);
++        }
++    }
++
++    private static void logFileSaved(Context context, String bareUrl, String base64Path, String temporary_file_path) {
++        JSONObject jsonLog = new JSONObject();
++        try {
++            jsonLog.put("file_loaded", true);
++            jsonLog.put("original_file_url", bareUrl);
++            jsonLog.put("temporary_file_path", temporary_file_path);
++            jsonLog.put("package", context.getPackageName());
++            jsonLog.put("base64", base64Path);
++        } catch (JSONException e) {
++            e.printStackTrace();
++        }
++        Log.i("33WV_API_CALL44", jsonLog.toString());
++    }
++
++    private static final Pattern sFileAndroidAssetPattern =
++            Pattern.compile("^file:/*android_(asset|res).*");
++    
++    public static void maybeSaveFileForUrl(String url) {
++        if (url == null || url.isEmpty()) {
++            return;
++        }
++
++        // We need to get rid of query and fragment to have a consistent file name
++        Uri originalUri = Uri.parse(url);
++        Uri.Builder builder = originalUri.buildUpon();
++        builder.clearQuery();
++        builder.fragment(null);
++        
++        Uri bareUri = builder.build();
++        String bareUrl = bareUri.toString();
++
++        // Generate the output file name
++        String outputFileName = android.util.Base64.encodeToString(
++            bareUrl.getBytes(), 
++            android.util.Base64.URL_SAFE | android.util.Base64.NO_WRAP
++        );
++
++        Context context = org.chromium.base.ContextUtils.getApplicationContext();
++        String scheme = bareUri.getScheme();
++        String path = bareUri.getPath();
++
++        if (sFileAndroidAssetPattern.matcher(url).matches()) {
++            saveAndroidAssetOrResourceFile(context, path, outputFileName, bareUrl);
++        } else if (url.startsWith("file:")) {
++            logFileSaved(context, bareUrl, outputFileName, null);
++        }
++    }
++
++    /*private static void saveOtherFile(Context context, String filePath, String outputFileName) {
++        File filesDir = context.getFilesDir();
++        File myFile = new File(filesDir, outputFileName);
++        if (myFile.exists()) {
++            Log.i("33WV_LOG_CALL44", "File already exists: " + myFile.getAbsolutePath());
++            return;
++        }
++
++        try (InputStream inputStream = new FileInputStream(filePath)) {
++            writeFileUsingOutputStream(context, inputStream, outputFileName);
++            logFileSaved(context, outputFileName);
++        } catch (IOException e) {
++            Log.e("33WV_LOG_CALL44_E", "Error writing file with InputStream: " + filePath, e);
++        }
++    }*/
++
++    private static void saveAndroidAssetOrResourceFile(Context context, String filePath, String outputFileName, String bareUrl) {
++        if (filePath.contains("android_asset")) {
++            String assetFilePath = filePath.split("android_asset/")[1];
++            saveAndroidAssetFile(context, assetFilePath, outputFileName, bareUrl);
++        } else if (filePath.contains("android_res")) {
++            String resourceFilePath = filePath.split("android_res/")[1];
++            saveAndroidResourceFile(context, resourceFilePath, outputFileName, bareUrl);
++        }
++    }
++
++    private static void saveAndroidResourceFile(Context context, String resourceFilePath, String outputFileName, String bareUrl) {
++        File filesDir = context.getFilesDir();
++        File myFile = new File(filesDir, outputFileName);
++        if (myFile.exists()) {
++            Log.i("33WV_LOG_CALL44", "File already exists: " + myFile.getAbsolutePath());
++            return;
++        }
++
++        try {
++            String[] parts = resourceFilePath.split("/");
++            String resourceName = parts[parts.length - 1];
++            String resourceNameWithoutExtension = resourceName.split("\\.")[0];
++            try (InputStream inputStream = context.getResources().openRawResource(
++                context.getResources().getIdentifier(resourceNameWithoutExtension, "raw", context.getPackageName()))) {
++                writeFileUsingOutputStream(context, inputStream, outputFileName);
++                logFileSaved(context, bareUrl, outputFileName, outputFileName);
++            } catch (IOException e) {
++                Log.e("33WV_LOG_CALL44_E", "Error writing file with InputStream: " + resourceFilePath, e);
++            }
++        } catch (Exception e) {
++            Log.e("33WV_LOG_CALL44_E", "Error getting resource ID: " + resourceFilePath, e);
++        }        
++    }
++
++    private static void saveAndroidAssetFile(Context context, String assetFilePath, String outputFileName, String bareUrl) {
++        File filesDir = context.getFilesDir();
++        File myFile = new File(filesDir, outputFileName);
++        if (myFile.exists()) {
++            Log.i("33WV_LOG_CALL44", "File already exists: " + myFile.getAbsolutePath());
++            return;
++        }
++        
++        AssetManager assetManager = context.getAssets();
++        try (InputStream inputStream = assetManager.open(assetFilePath)) {
++            writeFileUsingOutputStream(context, inputStream, outputFileName);
++            logFileSaved(context, bareUrl, outputFileName, outputFileName);
++        } catch (IOException e) {
++            Log.e("33WV_LOG_CALL44_E", "Error writing file with InputStream: " + assetFilePath, e);
++        }
++    }
++
++    private static void writeFileUsingOutputStream(Context context, InputStream inputStream, String fileName) {
++        File filesDir = context.getFilesDir();
++        File myFile = new File(filesDir, fileName);
++        try (FileOutputStream fos = new FileOutputStream(myFile)) {
++            byte[] buffer = new byte[1024];
++            int bytesRead;
++            while ((bytesRead = inputStream.read(buffer)) != -1) {
++                fos.write(buffer, 0, bytesRead);
++            }
++            fos.getFD().sync();  // Force write to disk
++        } catch (IOException e) {
++            Log.e("33WV_LOG_CALL44_E", "Error writing file with OutputStream: " + myFile.getAbsolutePath(), e);
++        }
++    }
++
++
++    private static void writeFileUsingOutputStream(Context context, String data, String fileName) {
++        File filesDir = context.getFilesDir();
++        File myFile = new File(filesDir, fileName);
++        try (FileOutputStream fos = new FileOutputStream(myFile)) {
++            if (data != null && !data.isEmpty()) {
++                fos.write(data.getBytes());  // Write raw bytes
++                fos.getFD().sync();  // Force write to disk
++            }
++        } catch (IOException e) {
++            Log.e("33WV_LOG_CALL44_E", "Error writing file with OutputStream: " + myFile.getAbsolutePath(), e);
++        }
++}
++
++
++
++
++
++
++
+ }
+diff --git a/android_webview/glue/java/src/com/android/webview/chromium/WebStorageAdapter.java b/android_webview/glue/java/src/com/android/webview/chromium/WebStorageAdapter.java
+index 12e096761ddd2..b3534c1039349 100644
+--- a/android_webview/glue/java/src/com/android/webview/chromium/WebStorageAdapter.java
++++ b/android_webview/glue/java/src/com/android/webview/chromium/WebStorageAdapter.java
+@@ -8,6 +8,7 @@ import android.webkit.ValueCallback;
+ import android.webkit.WebStorage;
+ 
+ import com.android.webview.chromium.WebViewChromium.ApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordWebViewApiCall;
+ 
+ import org.chromium.android_webview.AwQuotaManagerBridge;
+ import org.chromium.android_webview.common.Lifetime;
+@@ -27,7 +28,7 @@ import java.util.Map;
+ final class WebStorageAdapter extends WebStorage {
+     private final WebViewChromiumFactoryProvider mFactory;
+     private final AwQuotaManagerBridge mQuotaManagerBridge;
+-    private static final int NONE = -2;
++    private static final String NONE = null;
+ 
+     WebStorageAdapter(
+             WebViewChromiumFactoryProvider factory, AwQuotaManagerBridge quotaManagerBridge) {
+@@ -37,7 +38,7 @@ final class WebStorageAdapter extends WebStorage {
+ 
+     @Override
+     public void getOrigins(final ValueCallback<Map> callback) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_GET_ORIGINS, new Object[] {callback});
++        recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_GET_ORIGINS, new Object[] {callback});
+         final Callback<AwQuotaManagerBridge.Origins> awOriginsCallback =
+                 (origins) -> {
+                     Map<String, Origin> originsMap = new HashMap<String, Origin>();
+@@ -75,7 +76,7 @@ final class WebStorageAdapter extends WebStorage {
+ 
+     @Override
+     public void getUsageForOrigin(final String origin, final ValueCallback<Long> callback) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_GET_USAGE_FOR_ORIGIN, new Object[] {origin, callback});
++        recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_GET_USAGE_FOR_ORIGIN, new Object[] {origin, callback});
+         if (checkNeedsPost()) {
+             mFactory.addTask(
+                     () -> {
+@@ -100,7 +101,7 @@ final class WebStorageAdapter extends WebStorage {
+ 
+     @Override
+     public void getQuotaForOrigin(final String origin, final ValueCallback<Long> callback) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_GET_QUOTA_FOR_ORIGIN, new Object[] {origin, callback});
++        recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_GET_QUOTA_FOR_ORIGIN, new Object[] {origin, callback});
+         if (checkNeedsPost()) {
+             mFactory.addTask(
+                     () -> {
+@@ -125,13 +126,13 @@ final class WebStorageAdapter extends WebStorage {
+ 
+     @Override
+     public void setQuotaForOrigin(String origin, long quota) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_SET_QUOTA_FOR_ORIGIN, new Object[] {origin, quota});
++        recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_SET_QUOTA_FOR_ORIGIN, new Object[] {origin, quota});
+         // Intentional no-op for deprecated method.
+     }
+ 
+     @Override
+     public void deleteOrigin(final String origin) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_DELETE_ORIGIN, new Object[] {origin});
++        recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_DELETE_ORIGIN, new Object[] {origin});
+         if (checkNeedsPost()) {
+             mFactory.addTask(
+                     () -> {
+@@ -153,7 +154,7 @@ final class WebStorageAdapter extends WebStorage {
+ 
+     @Override
+     public void deleteAllData() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_DELETE_ALL_DATA, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.WEB_STORAGE_DELETE_ALL_DATA, new Object[] {});
+         if (checkNeedsPost()) {
+             mFactory.addTask(
+                     () -> {
+diff --git a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromium.java b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromium.java
+index 63d6fdea3689b..dc329457e3007 100644
+--- a/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromium.java
++++ b/android_webview/glue/java/src/com/android/webview/chromium/WebViewChromium.java
+@@ -63,6 +63,10 @@ import androidx.annotation.IntDef;
+ 
+ import com.android.webview.chromium.WebViewChromiumAwInit.CallSite;
+ 
++import static com.android.webview.chromium.SharedWebViewChromium.recordInit;
++import static com.android.webview.chromium.SharedWebViewChromium.recordWebViewApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.maybeSaveFileForUrl;
++
+ import org.chromium.android_webview.AwBrowserContext;
+ import org.chromium.android_webview.AwBrowserContextStore;
+ import org.chromium.android_webview.AwContents;
+@@ -693,6 +697,10 @@ class WebViewChromium
+         RecordHistogram.recordEnumeratedHistogram("Android.WebView.ApiCall", sample, ApiCall.COUNT);
+     }
+ 
++    public static void recordWebViewApiCall(String id, int sample, Object[] parameters) {
++        com.android.webview.chromium.SharedWebViewChromium.recordWebViewApiCall(id, sample, parameters);
++    }
++
+     // These values are persisted to logs. Entries should not be renumbered and
+     // numeric values should never be reused.
+     @IntDef({
+@@ -738,256 +746,6 @@ class WebViewChromium
+                 "Android.WebView.ApiCall.System", sample, SystemApiCall.COUNT);
+     }
+ 
+-    /**
+-     * Returns the name of the API call for the given sample.
+-     * @param sample The sample to get the name for.
+-     * @return The name of the API call.
+-     */
+-    private static String getApiCallName(int sample) {
+-        String apiCallName = null;
+-        try {
+-            Field[] fields = ApiCall.class.getDeclaredFields();
+-            for (Field field : fields) {
+-                if (field.getInt(null) == sample) {
+-                    apiCallName = field.getName();
+-                    break;
+-                }
+-            }
+-        } catch (IllegalAccessException e) {
+-            e.printStackTrace();
+-        }
+-        return apiCallName;
+-    }
+-
+-
+-    private static JSONArray serializeTrace(StackTraceElement[] stackTrace) {
+-        JSONArray traceArray = new JSONArray();
+-        for (StackTraceElement element : stackTrace) {
+-            traceArray.put(element.toString());
+-        }
+-        return traceArray;
+-    }
+-
+-    private static JSONArray serializeArray(Object array) {
+-        JSONArray jsonArray = new JSONArray();
+-        int length = java.lang.reflect.Array.getLength(array);
+-        for (int i = 0; i < length; i++) {
+-            jsonArray.put(serializeObject(java.lang.reflect.Array.get(array, i)));
+-        }
+-        return jsonArray;
+-    }
+-
+-    private static JSONArray serializeCollection(java.util.Collection<?> collection) {
+-        JSONArray jsonArray = new JSONArray();
+-        for (Object item : collection) {
+-            jsonArray.put(serializeObject(item));
+-        }
+-        return jsonArray;
+-    }
+-
+-    private static Object serializeObject(Object object) {
+-        if (object == null) {
+-            return JSONObject.NULL;
+-        } else if (object instanceof String) {
+-            return JSONObject.quote((String) object);
+-        } else if (object.getClass().isArray()) {
+-            return serializeArray(object);
+-        } else if (object instanceof Number || object instanceof Boolean) {
+-            return object;
+-        } else if (object instanceof java.util.Collection) {
+-            return serializeCollection((java.util.Collection<?>) object);
+-        } else {
+-            return JSONObject.quote(object.toString());
+-        }
+-    }
+-
+-    private static JSONArray serializeParams(Object[] params) {
+-        JSONArray jsonArray = new JSONArray();
+-        for (Object param : params) {
+-            jsonArray.put(serializeObject(param));
+-        }
+-        return jsonArray;
+-    }
+-
+-    public static void recordInit(String firstName, int firstCode, String secondName, int secondCode) {
+-        JSONObject jsonLog = new JSONObject();
+-        try {
+-            jsonLog.put("init", true);
+-            jsonLog.put("from", firstName);
+-            jsonLog.put("id_first", firstCode);
+-            jsonLog.put("to", secondName);
+-            jsonLog.put("id_second", secondCode);
+-        } catch (JSONException e) {
+-            e.printStackTrace();
+-        }
+-        Log.i("33WV_API_CALL44", jsonLog.toString());
+-    }
+-
+-    public static void recordWebViewApiCall(int id, int sample, Object[] parameters) {
+-        String apiName = getApiCallName(sample);
+-        java.lang.StackTraceElement[] stackTrace = java.lang.Thread.currentThread().getStackTrace();
+-
+-        Context context = org.chromium.base.ContextUtils.getApplicationContext();
+-
+-        // remove the first 5 elements of the stack trace, which are not useful for logging as it is WebView-provider specific code
+-        // remove the last 5 elements of the stack trace, as it is Android-specific code
+-        stackTrace = java.util.Arrays.copyOfRange(stackTrace, 5, stackTrace.length);
+-        JSONArray traceArray = serializeTrace(stackTrace);
+-        JSONArray paramsArray = serializeParams(parameters);
+-
+-        JSONObject jsonLog = new JSONObject();
+-        try {
+-            jsonLog.put("webview_id", id);
+-            jsonLog.put("package", context.getPackageName());
+-            jsonLog.put("api", apiName);
+-            jsonLog.put("api_id", sample);
+-            jsonLog.put("params", paramsArray);
+-            jsonLog.put("trace", traceArray);
+-        } catch (JSONException e) {
+-            e.printStackTrace();
+-        }
+-
+-        String logString = jsonLog.toString();
+-
+-        if (logString.length() > 3900) {
+-            String uuid = java.util.UUID.randomUUID().toString();
+-            writeFileUsingOutputStream(context, logString, "33file44-" + uuid);
+-            Log.i("33WV_API_CALL44", "33file44-" + uuid + "_" + context.getPackageName());
+-        } else {
+-            Log.i("33WV_API_CALL44", logString);
+-        }
+-    }
+-
+-    private static void logFileSaved(Context context, String fileName) {
+-        JSONObject jsonLog = new JSONObject();
+-        try {
+-            jsonLog.put("file_saved", fileName);
+-            jsonLog.put("package", context.getPackageName());
+-        } catch (JSONException e) {
+-            e.printStackTrace();
+-        }
+-        Log.i("33WV_API_CALL44", jsonLog.toString());
+-    }
+-
+-    private static final Pattern sFileAndroidAssetPattern =
+-            Pattern.compile("^file:/*android_(asset|res).*");
+-    
+-    private static void maybeSaveFileForUrl(String url) {
+-        if (sFileAndroidAssetPattern.matcher(url).matches()) {
+-            Uri uri = Uri.parse(url);
+-            String filePath = uri.getPath();
+-            Context context = org.chromium.base.ContextUtils.getApplicationContext();
+-            saveAndroidAssetOrResourceFile(context, filePath);
+-        } else if (url.startsWith("file:")) {
+-            Uri uri = Uri.parse(url);
+-            String filePath = uri.getPath();
+-            Context context = org.chromium.base.ContextUtils.getApplicationContext();
+-            saveOtherFile(context, filePath);
+-        }
+-    }
+-
+-    private static void saveOtherFile(Context context, String filePath) {
+-        String outputFileName = "file-" + filePath.replace("/", "_");
+-        File filesDir = context.getFilesDir();
+-        File myFile = new File(filesDir, outputFileName);
+-        if (myFile.exists()) {
+-            Log.i("33WV_LOG_CALL44", "File already exists: " + myFile.getAbsolutePath());
+-            return;
+-        }
+-
+-        try (InputStream inputStream = new FileInputStream(filePath)) {
+-            writeFileUsingOutputStream(context, inputStream, outputFileName);
+-            logFileSaved(context, outputFileName);
+-        } catch (IOException e) {
+-            Log.e("33WV_LOG_CALL44_E", "Error writing file with InputStream: " + filePath, e);
+-        }
+-    }
+-
+-    private static void saveAndroidAssetOrResourceFile(Context context, String filePath) {
+-        if (filePath.contains("android_asset")) {
+-            String assetFilePath = filePath.split("android_asset/")[1];
+-            saveAndroidAssetFile(context, assetFilePath);
+-        } else if (filePath.contains("android_res")) {
+-            String resourceFilePath = filePath.split("android_res/")[1];
+-            saveAndroidResourceFile(context, resourceFilePath);
+-        } else {
+-
+-        }
+-    }
+-
+-    private static void saveAndroidResourceFile(Context context, String resourceFilePath) {
+-        String outputFileName = "res-" + resourceFilePath.replace("/", "_");
+-        File filesDir = context.getFilesDir();
+-        File myFile = new File(filesDir, outputFileName);
+-        if (myFile.exists()) {
+-            Log.i("33WV_LOG_CALL44", "File already exists: " + myFile.getAbsolutePath());
+-            return;
+-        }
+-
+-        try {
+-            String[] parts = resourceFilePath.split("/");
+-            String resourceName = parts[parts.length - 1];
+-            String resourceNameWithoutExtension = resourceName.split("\\.")[0];
+-            String resourceType = parts[parts.length - 2];
+-            try (InputStream inputStream = context.getResources().openRawResource(
+-                context.getResources().getIdentifier(resourceNameWithoutExtension, "raw", context.getPackageName()))) {
+-                writeFileUsingOutputStream(context, inputStream, outputFileName);
+-                logFileSaved(context, outputFileName);
+-            } catch (IOException e) {
+-                Log.e("33WV_LOG_CALL44_E", "Error writing file with InputStream: " + resourceFilePath, e);
+-            }
+-        } catch (Exception e) {
+-            Log.e("33WV_LOG_CALL44_E", "Error getting resource ID: " + resourceFilePath, e);
+-        }        
+-    }
+-
+-    private static void saveAndroidAssetFile(Context context, String assetFilePath) {
+-        String outputFileName = "asset-" + assetFilePath.replace("/", "_");
+-        File filesDir = context.getFilesDir();
+-        File myFile = new File(filesDir, outputFileName);
+-        if (myFile.exists()) {
+-            Log.i("33WV_LOG_CALL44", "File already exists: " + myFile.getAbsolutePath());
+-            return;
+-        }
+-        
+-        AssetManager assetManager = context.getAssets();
+-        try (InputStream inputStream = assetManager.open(assetFilePath)) {
+-            writeFileUsingOutputStream(context, inputStream, outputFileName);
+-            logFileSaved(context, outputFileName);
+-        } catch (IOException e) {
+-            Log.e("33WV_LOG_CALL44_E", "Error writing file with InputStream: " + assetFilePath, e);
+-        }
+-    }
+-
+-    private static void writeFileUsingOutputStream(Context context, InputStream inputStream, String fileName) {
+-        File filesDir = context.getFilesDir();
+-        File myFile = new File(filesDir, fileName);
+-        try (FileOutputStream fos = new FileOutputStream(myFile)) {
+-            byte[] buffer = new byte[1024];
+-            int bytesRead;
+-            while ((bytesRead = inputStream.read(buffer)) != -1) {
+-                fos.write(buffer, 0, bytesRead);
+-            }
+-            fos.getFD().sync();  // Force write to disk
+-        } catch (IOException e) {
+-            Log.e("33WV_LOG_CALL44_E", "Error writing file with OutputStream: " + myFile.getAbsolutePath(), e);
+-        }
+-    }
+-
+-
+-    private static void writeFileUsingOutputStream(Context context, String data, String fileName) {
+-        File filesDir = context.getFilesDir();
+-        File myFile = new File(filesDir, fileName);
+-        try (FileOutputStream fos = new FileOutputStream(myFile)) {
+-            if (data != null && !data.isEmpty()) {
+-                fos.write(data.getBytes());  // Write raw bytes
+-                fos.getFD().sync();  // Force write to disk
+-            }
+-        } catch (IOException e) {
+-            Log.e("33WV_LOG_CALL44_E", "Error writing file with OutputStream: " + myFile.getAbsolutePath(), e);
+-        }
+-}
+-
+     /*private static void writeToFileAsync(Context context, String data, String fileName) {
+         ExecutorService executor = Executors.newSingleThreadExecutor();
+         executor.execute(() -> {
+@@ -1018,8 +776,8 @@ class WebViewChromium
+             WebView webView,
+             WebView.PrivateAccess webViewPrivate) { 
+         int webViewHashCode = webView.hashCode();
+-        int thisHashCode = hashCode();
+-        recordInit("WebView", webViewHashCode, "WebViewChromium", thisHashCode);
++        String id = java.util.UUID.randomUUID().toString();
++        recordInit("WebView", String.valueOf(webViewHashCode), "WebViewChromium", id);
+         
+         try (ScopedSysTraceEvent e1 = ScopedSysTraceEvent.scoped("WebViewChromium.constructor")) {
+             WebViewChromiumFactoryProvider.checkStorageIsNotDeviceProtected(webView.getContext());
+@@ -1031,9 +789,9 @@ class WebViewChromium
+             mFactory = factory;
+             mAwInit = mFactory.getAwInit();
+             factory.addWebViewAssetPath(mWebView.getContext());
+-            webViewId = hashCode();
++            webViewId = id;
+             mSharedWebViewChromium = new SharedWebViewChromium(mFactory.getRunQueue(), mAwInit);
+-            mSharedWebViewChromium.setWebViewId(webViewId);
++            mSharedWebViewChromium.setFrameworkWebViewId(webViewId);
+             if (mAppTargetSdkVersion >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                 // If the app targets >= JB MR2 then we require that WebView is only used from a
+                 // single thread. So, we set the current thread as the Chromium  UI thread.
+@@ -1062,7 +820,7 @@ class WebViewChromium
+         parentContents.supplyContentsForPopup(childContents);
+     }
+ 
+-    private int webViewId;
++    private final String webViewId;
+ 
+     // WebViewProvider methods --------------------------------------------------------------------
+ 
+@@ -2195,7 +1953,7 @@ class WebViewChromium
+ 
+     @Override
+     public Bitmap getFavicon() {
+-        recordWebViewApiCall(this.webViewId, ApiCall.GET_FAVICON, new Object[] {});
++        //recordWebViewApiCall(this.webViewId, ApiCall.GET_FAVICON, new Object[] {});
+         mAwInit.triggerAndWaitForChromiumStarted(CallSite.WEBVIEW_INSTANCE_GET_FAVICON);
+         if (checkNeedsPost()) {
+             Bitmap ret =
+@@ -2222,7 +1980,7 @@ class WebViewChromium
+ 
+     @Override
+     public int getProgress() {
+-        recordWebViewApiCall(this.webViewId, ApiCall.GET_PROGRESS, new Object[] {});
++        //recordWebViewApiCall(this.webViewId, ApiCall.GET_PROGRESS, new Object[] {});
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.Framework.GET_PROGRESS")) {
+             recordWebViewApiCall(ApiCall.GET_PROGRESS);
+             if (mAwContents == null) return 100;
+@@ -2846,7 +2604,7 @@ class WebViewChromium
+ 
+     @Override
+     public WebSettings getSettings() {
+-        recordWebViewApiCall(this.webViewId, ApiCall.GET_SETTINGS, new Object[] {});
++        //recordWebViewApiCall(this.webViewId, ApiCall.GET_SETTINGS, new Object[] {});
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.Framework.GET_SETTINGS")) {
+             recordWebViewApiCall(ApiCall.GET_SETTINGS);
+             return mWebSettings;
+@@ -3090,6 +2848,7 @@ class WebViewChromium
+     public void onProvideAutofillVirtualStructure(final ViewStructure structure, final int flags) {
+         recordWebViewApiCall(this.webViewId, ApiCall.ON_PROVIDE_AUTOFILL_VIRTUAL_STRUCTURE, new Object[] {structure, flags});
+         mAwInit.triggerAndWaitForChromiumStarted(
++                CallSite.WEBVIEW_INSTANCE_ON_PROVIDE_AUTOFILL_VIRTUAL_STRUCTURE);
+         if (checkNeedsPost()) {
+             mFactory.runVoidTaskOnUiThreadBlocking(
+                     new Runnable() {
+@@ -3190,7 +2949,7 @@ class WebViewChromium
+ 
+     @Override
+     public void onProvideVirtualStructure(final ViewStructure structure) {
+-        recordWebViewApiCall(this.webViewId, ApiCall.ON_PROVIDE_VIRTUAL_STRUCTURE, new Object[] {structure});
++        //recordWebViewApiCall(this.webViewId, ApiCall.ON_PROVIDE_VIRTUAL_STRUCTURE, new Object[] {structure});
+         mAwInit.triggerAndWaitForChromiumStarted(
+                 CallSite.WEBVIEW_INSTANCE_ON_PROVIDE_VIRTUAL_STRUCTURE);
+         
+@@ -3244,7 +3003,7 @@ class WebViewChromium
+ 
+     @Override
+     public void setOverScrollMode(final int mode) {
+-        recordWebViewApiCall(this.webViewId, ApiCall.SET_OVERSCROLL_MODE, new Object[] {mode});
++        //recordWebViewApiCall(this.webViewId, ApiCall.SET_OVERSCROLL_MODE, new Object[] {mode});
+         // This gets called from the android.view.View c'tor that WebView inherits from. This
+         // causes the method to be called when mAwContents == null.
+         // It's safe to ignore these calls however since AwContents will read the current value of
+@@ -3359,7 +3118,7 @@ class WebViewChromium
+ 
+     @Override
+     public void setLayoutParams(final ViewGroup.LayoutParams layoutParams) {
+-        recordWebViewApiCall(this.webViewId, ApiCall.SET_LAYOUT_PARAMS, new Object[] {layoutParams});
++        //recordWebViewApiCall(this.webViewId, ApiCall.SET_LAYOUT_PARAMS, new Object[] {layoutParams});
+         checkThread();
+         mWebViewPrivate.super_setLayoutParams(layoutParams);
+         if (checkNeedsPost()) {
+@@ -3720,7 +3479,7 @@ class WebViewChromium
+ 
+     @Override
+     public boolean requestFocus(final int direction, final Rect previouslyFocusedRect) {
+-        recordWebViewApiCall(this.webViewId, ApiCall.REQUEST_FOCUS, new Object[] {direction, previouslyFocusedRect});
++        //recordWebViewApiCall(this.webViewId, ApiCall.REQUEST_FOCUS, new Object[] {direction, previouslyFocusedRect});
+         mAwInit.triggerAndWaitForChromiumStarted(CallSite.WEBVIEW_INSTANCE_REQUEST_FOCUS);
+         if (checkNeedsPost()) {
+             boolean ret =
+@@ -3827,7 +3586,7 @@ class WebViewChromium
+     // Overrides method added to WebViewProvider.ViewDelegate interface
+     @Override
+     public Handler getHandler(Handler originalHandler) {
+-        recordWebViewApiCall(this.webViewId, ApiCall.GET_HANDLER, new Object[] {originalHandler});
++        //recordWebViewApiCall(this.webViewId, ApiCall.GET_HANDLER, new Object[] {originalHandler});
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.Framework.GET_HANDLER")) {
+             recordWebViewApiCall(ApiCall.GET_HANDLER);
+             return originalHandler;
+@@ -3837,7 +3596,7 @@ class WebViewChromium
+     // Overrides method added to WebViewProvider.ViewDelegate interface
+     @Override
+     public View findFocus(View originalFocusedView) {
+-        recordWebViewApiCall(this.webViewId, ApiCall.FIND_FOCUS, new Object[] {originalFocusedView});
++        //recordWebViewApiCall(this.webViewId, ApiCall.FIND_FOCUS, new Object[] {originalFocusedView});
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.Framework.FIND_FOCUS")) {
+             recordWebViewApiCall(ApiCall.FIND_FOCUS);
+             return originalFocusedView;
+diff --git a/android_webview/glue/java/src/com/android/webview/chromium/WebViewDatabaseAdapter.java b/android_webview/glue/java/src/com/android/webview/chromium/WebViewDatabaseAdapter.java
+index cb491e56bb2f1..8031a25bb341e 100644
+--- a/android_webview/glue/java/src/com/android/webview/chromium/WebViewDatabaseAdapter.java
++++ b/android_webview/glue/java/src/com/android/webview/chromium/WebViewDatabaseAdapter.java
+@@ -8,6 +8,8 @@ import android.webkit.WebViewDatabase;
+ 
+ import com.android.webview.chromium.WebViewChromium.ApiCall;
+ 
++import static com.android.webview.chromium.SharedWebViewChromium.recordWebViewApiCall;
++
+ import org.chromium.android_webview.HttpAuthDatabase;
+ import org.chromium.base.ThreadUtils;
+ import org.chromium.base.TraceEvent;
+@@ -22,7 +24,7 @@ import java.util.concurrent.Callable;
+ final class WebViewDatabaseAdapter extends WebViewDatabase {
+     private final WebViewChromiumFactoryProvider mFactory;
+     private final HttpAuthDatabase mHttpAuthDatabase;
+-    private static final int NONE = -2;
++    private static final String NONE = null;
+ 
+     public WebViewDatabaseAdapter(
+             WebViewChromiumFactoryProvider factory, HttpAuthDatabase httpAuthDatabase) {
+@@ -32,7 +34,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+ 
+     @Override
+     public boolean hasUsernamePassword() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_HAS_USERNAME_PASSWORD, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_HAS_USERNAME_PASSWORD, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.WEBVIEW_DATABASE_HAS_USERNAME_PASSWORD")) {
+@@ -44,7 +46,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+ 
+     @Override
+     public void clearUsernamePassword() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_CLEAR_USERNAME_PASSWORD, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_CLEAR_USERNAME_PASSWORD, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped(
+                         "WebView.APICall.Framework.WEBVIEW_DATABASE_CLEAR_USERNAME_PASSWORD")) {
+@@ -55,7 +57,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+ 
+     @Override
+     public boolean hasHttpAuthUsernamePassword() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_HAS_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_HAS_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {});
+         if (checkNeedsPost()) {
+             return mFactory.runOnUiThreadBlocking(
+                     new Callable<Boolean>() {
+@@ -82,7 +84,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+ 
+     @Override
+     public void clearHttpAuthUsernamePassword() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_CLEAR_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_CLEAR_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {});
+         if (checkNeedsPost()) {
+             mFactory.addTask(
+                     new Runnable() {
+@@ -111,7 +113,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+     @Override
+     public void setHttpAuthUsernamePassword(
+             final String host, final String realm, final String username, final String password) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_SET_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {host, realm, username, password});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_SET_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {host, realm, username, password});
+         if (checkNeedsPost()) {
+             mFactory.addTask(
+                     new Runnable() {
+@@ -141,7 +143,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+ 
+     @Override
+     public String[] getHttpAuthUsernamePassword(final String host, final String realm) {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_GET_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {host, realm});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_GET_HTTP_AUTH_USERNAME_PASSWORD, new Object[] {host, realm});
+         if (checkNeedsPost()) {
+             return mFactory.runOnUiThreadBlocking(
+                     new Callable<String[]>() {
+@@ -168,7 +170,7 @@ final class WebViewDatabaseAdapter extends WebViewDatabase {
+ 
+     @Override
+     public boolean hasFormData() {
+-        WebViewChromium.recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_HAS_FORM_DATA, new Object[] {});
++        recordWebViewApiCall(NONE, ApiCall.WEBVIEW_DATABASE_HAS_FORM_DATA, new Object[] {});
+         return false;
+     }
+ 
+diff --git a/android_webview/java/src/org/chromium/android_webview/common/CommandLineUtil.java b/android_webview/java/src/org/chromium/android_webview/common/CommandLineUtil.java
+index 294805b22a334..977758fe8fc13 100644
+--- a/android_webview/java/src/org/chromium/android_webview/common/CommandLineUtil.java
++++ b/android_webview/java/src/org/chromium/android_webview/common/CommandLineUtil.java
+@@ -25,7 +25,7 @@ public final class CommandLineUtil {
+      * we subsequently access CommandLine.
+      */
+     public static void initCommandLine() {
+-        if (AndroidInfo.isDebugAndroid()) {
++        if (true /* AndroidInfo.isDebuggableBuild() */) {
+             // Suppress the StrictMode violation as this codepath is only hit on debuggable builds.
+             StrictMode.ThreadPolicy oldPolicy = StrictMode.allowThreadDiskReads();
+             CommandLine.initFromFile(CommandLineUtil.WEBVIEW_COMMAND_LINE_FILE);
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibJsReplyProxyAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibJsReplyProxyAdapter.java
+index 13cdd00ed263d..0e45381668298 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibJsReplyProxyAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibJsReplyProxyAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.AwSupportLibIsomorphic;
+ import org.chromium.android_webview.JsReplyProxy;
+@@ -20,15 +21,23 @@ class SupportLibJsReplyProxyAdapter extends IsomorphicAdapter
+         implements JsReplyProxyBoundaryInterface {
+     private final JsReplyProxy mReplyProxy;
+ 
++    private String webViewId = null;
++
+     public SupportLibJsReplyProxyAdapter(JsReplyProxy replyProxy) {
+         mReplyProxy = replyProxy;
+     }
+ 
++    public void setWebViewId(String webViewId) {
++        this.webViewId = webViewId;
++    }
++
+     @Override
+     public void postMessage(String message) {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.JS_REPLY_POST_MESSAGE")) {
+             recordApiCall(ApiCall.JS_REPLY_POST_MESSAGE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.JS_REPLY_POST_MESSAGE, new Object[] {message});
+             mReplyProxy.postMessage(new MessagePayload(message));
+         }
+     }
+@@ -38,6 +47,10 @@ class SupportLibJsReplyProxyAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.JS_REPLY_POST_MESSAGE_WITH_PAYLOAD")) {
+             recordApiCall(ApiCall.JS_REPLY_POST_MESSAGE_WITH_PAYLOAD);
++            recordSupportLibApiCall(
++                    this.webViewId,
++                    ApiCall.JS_REPLY_POST_MESSAGE_WITH_PAYLOAD,
++                    new Object[] {payload});
+             mReplyProxy.postMessage(SupportLibWebMessagePayloadAdapter.toMessagePayload(payload));
+         }
+     }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProfile.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProfile.java
+index 52a851600a0ef..0e1299ee87f34 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProfile.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProfile.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import android.os.CancellationSignal;
+ import android.os.SystemClock;
+@@ -41,6 +42,7 @@ import java.util.function.Consumer;
+ @Lifetime.Profile
+ public class SupportLibProfile implements ProfileBoundaryInterface {
+     private final Profile mProfileImpl;
++    private String NONE = null;
+ 
+     public SupportLibProfile(@NonNull Profile profile) {
+         mProfileImpl = profile;
+@@ -235,6 +237,7 @@ public class SupportLibProfile implements ProfileBoundaryInterface {
+             @NonNull String headerValue,
+             @NonNull Set<String> originRules) {
+         recordApiCall(ApiCall.SET_ORIGIN_MATCHED_HEADER);
++        recordSupportLibApiCall(NONE, ApiCall.SET_ORIGIN_MATCHED_HEADER, new Object[] {headerName, headerValue, originRules});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_ORIGIN_MATCHED_HEADER")) {
+             mProfileImpl.setOriginMatchedHeader(headerName, headerValue, originRules);
+@@ -244,6 +247,7 @@ public class SupportLibProfile implements ProfileBoundaryInterface {
+     @Override
+     public boolean hasOriginMatchedHeader(@NonNull String headerName) {
+         recordApiCall(ApiCall.HAS_ORIGIN_MATCHED_HEADER);
++            recordSupportLibApiCall(NONE, ApiCall.HAS_ORIGIN_MATCHED_HEADER, new Object[] {headerName});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.HAS_ORIGIN_MATCHED_HEADER")) {
+             return mProfileImpl.hasOriginMatchedHeader(headerName);
+@@ -253,6 +257,7 @@ public class SupportLibProfile implements ProfileBoundaryInterface {
+     @Override
+     public void clearOriginMatchedHeader(@NonNull String headerName) {
+         recordApiCall(ApiCall.CLEAR_ORIGIN_MATCHED_HEADER);
++        recordSupportLibApiCall(NONE, ApiCall.CLEAR_ORIGIN_MATCHED_HEADER, new Object[] {headerName});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.CLEAR_ORIGIN_MATCHED_HEADER")) {
+             mProfileImpl.clearOriginMatchedHeader(headerName);
+@@ -262,6 +267,7 @@ public class SupportLibProfile implements ProfileBoundaryInterface {
+     @Override
+     public void clearAllOriginMatchedHeaders() {
+         recordApiCall(ApiCall.CLEAR_ALL_ORIGIN_MATCHED_HEADERS);
++        recordSupportLibApiCall(NONE, ApiCall.CLEAR_ALL_ORIGIN_MATCHED_HEADERS, new Object[] {});
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.CLEAR_ALL_ORIGIN_MATCHED_HEADERS")) {
+             mProfileImpl.clearAllOriginMatchedHeaders();
+@@ -271,6 +277,7 @@ public class SupportLibProfile implements ProfileBoundaryInterface {
+     @Override
+     public void preconnect(String url) {
+         recordApiCall(ApiCall.PRECONNECT);
++        recordSupportLibApiCall(NONE, ApiCall.PRECONNECT, new Object[] {url});
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.PRECONNECT")) {
+             mProfileImpl.preconnect(url);
+         }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProxyControllerAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProxyControllerAdapter.java
+index 67c73aa0e6e30..af5d872a6b32c 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProxyControllerAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibProxyControllerAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.AwProxyController;
+ import org.chromium.android_webview.WebViewChromiumRunQueue;
+@@ -20,6 +21,7 @@ import java.util.concurrent.Executor;
+ public class SupportLibProxyControllerAdapter implements ProxyControllerBoundaryInterface {
+     private final WebViewChromiumRunQueue mRunQueue;
+     private final AwProxyController mProxyController;
++    private final String webViewId = null;
+ 
+     public SupportLibProxyControllerAdapter(
+             WebViewChromiumRunQueue runQueue, AwProxyController proxyController) {
+@@ -47,6 +49,12 @@ public class SupportLibProxyControllerAdapter implements ProxyControllerBoundary
+                     reverseBypass
+                             ? ApiCall.SET_PROXY_OVERRIDE
+                             : ApiCall.SET_PROXY_OVERRIDE_REVERSE_BYPASS);
++            recordSupportLibApiCall(
++                    this.webViewId,
++                    reverseBypass
++                            ? ApiCall.SET_PROXY_OVERRIDE
++                            : ApiCall.SET_PROXY_OVERRIDE_REVERSE_BYPASS,
++                    new Object[] {proxyRules, bypassRules, listener, executor, reverseBypass});
+             if (checkNeedsPost()) {
+                 RuntimeException exception =
+                         mRunQueue.runOnUiThreadBlocking(
+@@ -76,6 +84,8 @@ public class SupportLibProxyControllerAdapter implements ProxyControllerBoundary
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.CLEAR_PROXY_OVERRIDE")) {
+             recordApiCall(ApiCall.CLEAR_PROXY_OVERRIDE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.CLEAR_PROXY_OVERRIDE, new Object[] {listener, executor});
+             if (checkNeedsPost()) {
+                 RuntimeException exception =
+                         mRunQueue.runOnUiThreadBlocking(
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibScriptHandlerAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibScriptHandlerAdapter.java
+index 7204af34528e8..70e9f0e18670e 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibScriptHandlerAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibScriptHandlerAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.ScriptHandler;
+ import org.chromium.base.TraceEvent;
+@@ -15,15 +16,23 @@ import org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.ApiCall;
+ class SupportLibScriptHandlerAdapter implements ScriptHandlerBoundaryInterface {
+     private final ScriptHandler mScriptHandler;
+ 
++    private String webViewId = null;
++
+     public SupportLibScriptHandlerAdapter(ScriptHandler scriptHandler) {
+         mScriptHandler = scriptHandler;
+     }
+ 
++    public void setWebViewId(String webViewId) {
++        this.webViewId = webViewId;
++    }
++
+     @Override
+     public void remove() {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.REMOVE_DOCUMENT_START_SCRIPT")) {
+             recordApiCall(ApiCall.REMOVE_DOCUMENT_START_SCRIPT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.REMOVE_DOCUMENT_START_SCRIPT, new Object[] {});
+             mScriptHandler.remove();
+         }
+     }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerControllerAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerControllerAdapter.java
+index def792b394caa..cf1eac97c39d3 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerControllerAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerControllerAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.AwServiceWorkerController;
+ import org.chromium.android_webview.common.Lifetime;
+@@ -21,6 +22,8 @@ import java.lang.reflect.InvocationHandler;
+ class SupportLibServiceWorkerControllerAdapter implements ServiceWorkerControllerBoundaryInterface {
+     AwServiceWorkerController mAwServiceWorkerController;
+ 
++    private String NONE = null;
++
+     SupportLibServiceWorkerControllerAdapter(AwServiceWorkerController awServiceController) {
+         mAwServiceWorkerController = awServiceController;
+     }
+@@ -30,6 +33,8 @@ class SupportLibServiceWorkerControllerAdapter implements ServiceWorkerControlle
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_SERVICE_WORKER_WEB_SETTINGS")) {
+             recordApiCall(ApiCall.GET_SERVICE_WORKER_WEB_SETTINGS);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.GET_SERVICE_WORKER_WEB_SETTINGS, new Object[] {});
+             return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+                     new SupportLibServiceWorkerSettingsAdapter(
+                             mAwServiceWorkerController.getAwServiceWorkerSettings()));
+@@ -41,6 +46,8 @@ class SupportLibServiceWorkerControllerAdapter implements ServiceWorkerControlle
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_SERVICE_WORKER_CLIENT")) {
+             recordApiCall(ApiCall.SET_SERVICE_WORKER_CLIENT);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.SET_SERVICE_WORKER_CLIENT, new Object[] {client});
+             mAwServiceWorkerController.setServiceWorkerClient(
+                     client == null
+                             ? null
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerSettingsAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerSettingsAdapter.java
+index c1c85e7a62c71..55df9ffa815d9 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerSettingsAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibServiceWorkerSettingsAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.AwServiceWorkerSettings;
+ import org.chromium.base.TraceEvent;
+@@ -17,6 +18,9 @@ import java.util.Set;
+ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettingsBoundaryInterface {
+     private final AwServiceWorkerSettings mAwServiceWorkerSettings;
+ 
++    private String webViewId = null;
++
++
+     SupportLibServiceWorkerSettingsAdapter(AwServiceWorkerSettings settings) {
+         mAwServiceWorkerSettings = settings;
+     }
+@@ -31,6 +35,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_SET_CACHE_MODE")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_SET_CACHE_MODE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_SET_CACHE_MODE, new Object[] {mode});
+             mAwServiceWorkerSettings.setCacheMode(mode);
+         }
+     }
+@@ -41,6 +47,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_GET_CACHE_MODE")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_GET_CACHE_MODE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_GET_CACHE_MODE, new Object[] {});
+             return mAwServiceWorkerSettings.getCacheMode();
+         }
+     }
+@@ -51,6 +59,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_SET_ALLOW_CONTENT_ACCESS")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_SET_ALLOW_CONTENT_ACCESS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_SET_ALLOW_CONTENT_ACCESS, new Object[] {allow});
+             mAwServiceWorkerSettings.setAllowContentAccess(allow);
+         }
+     }
+@@ -61,6 +71,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_GET_ALLOW_CONTENT_ACCESS")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_GET_ALLOW_CONTENT_ACCESS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_GET_ALLOW_CONTENT_ACCESS, new Object[] {});
+             return mAwServiceWorkerSettings.getAllowContentAccess();
+         }
+     }
+@@ -71,6 +83,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_SET_ALLOW_FILE_ACCESS")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_SET_ALLOW_FILE_ACCESS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_SET_ALLOW_FILE_ACCESS, new Object[] {allow});
+             mAwServiceWorkerSettings.setAllowFileAccess(allow);
+         }
+     }
+@@ -81,6 +95,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_GET_ALLOW_FILE_ACCESS")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_GET_ALLOW_FILE_ACCESS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_GET_ALLOW_FILE_ACCESS, new Object[] {});
+             return mAwServiceWorkerSettings.getAllowFileAccess();
+         }
+     }
+@@ -91,6 +107,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_SET_BLOCK_NETWORK_LOADS")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_SET_BLOCK_NETWORK_LOADS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_SET_BLOCK_NETWORK_LOADS, new Object[] {flag});
+             mAwServiceWorkerSettings.setBlockNetworkLoads(flag);
+         }
+     }
+@@ -101,6 +119,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_GET_BLOCK_NETWORK_LOADS")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SETTINGS_GET_BLOCK_NETWORK_LOADS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SETTINGS_GET_BLOCK_NETWORK_LOADS, new Object[] {});
+             return mAwServiceWorkerSettings.getBlockNetworkLoads();
+         }
+     }
+@@ -112,6 +132,10 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_SET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST")) {
+             recordApiCall(
+                     ApiCall.SERVICE_WORKER_SETTINGS_SET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST);
++            recordSupportLibApiCall(
++                    this.webViewId,
++                    ApiCall.SERVICE_WORKER_SETTINGS_SET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST,
++                    new Object[] {allowedOriginRules});
+             mAwServiceWorkerSettings.setRequestedWithHeaderOriginAllowList(allowedOriginRules);
+         }
+     }
+@@ -123,6 +147,10 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SETTINGS_GET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST")) {
+             recordApiCall(
+                     ApiCall.SERVICE_WORKER_SETTINGS_GET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST);
++            recordSupportLibApiCall(
++                    this.webViewId,
++                    ApiCall.SERVICE_WORKER_SETTINGS_GET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST,
++                    new Object[] {});
+             return mAwServiceWorkerSettings.getRequestedWithHeaderOriginAllowList();
+         }
+     }
+@@ -133,6 +161,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_SET_INCLUDE_COOKIES_ON_INTERCEPT")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_SET_INCLUDE_COOKIES_ON_INTERCEPT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_SET_INCLUDE_COOKIES_ON_INTERCEPT, new Object[] {includeCookiesOnIntercept});
+             mAwServiceWorkerSettings.setIncludeCookiesOnIntercept(includeCookiesOnIntercept);
+         }
+     }
+@@ -143,6 +173,8 @@ class SupportLibServiceWorkerSettingsAdapter implements ServiceWorkerWebSettings
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SERVICE_WORKER_GET_INCLUDE_COOKIES_ON_INTERCEPT")) {
+             recordApiCall(ApiCall.SERVICE_WORKER_GET_INCLUDE_COOKIES_ON_INTERCEPT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SERVICE_WORKER_GET_INCLUDE_COOKIES_ON_INTERCEPT, new Object[] {});
+             return mAwServiceWorkerSettings.getIncludeCookiesOnIntercept();
+         }
+     }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebMessageListenerAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebMessageListenerAdapter.java
+index 23613f466a513..c188dd954aefd 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebMessageListenerAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebMessageListenerAdapter.java
+@@ -35,6 +35,8 @@ class SupportLibWebMessageListenerAdapter implements WebMessageListener {
+     private final WebMessageListenerBoundaryInterface mImpl;
+     private final String[] mSupportedFeatures;
+ 
++    private String webViewId = null;
++
+     public SupportLibWebMessageListenerAdapter(
+             WebView webView, /* WebMessageListener */ InvocationHandler handler) {
+         mWebView = webView;
+@@ -48,6 +50,10 @@ class SupportLibWebMessageListenerAdapter implements WebMessageListener {
+         return Proxy.getInvocationHandler(mImpl);
+     }
+ 
++    public void setWebViewId(String webViewId) {
++        this.webViewId = webViewId;
++    }
++
+     @Override
+     public void onPostMessage(
+             final MessagePayload payload,
+@@ -66,6 +72,11 @@ class SupportLibWebMessageListenerAdapter implements WebMessageListener {
+                 || (payload.getType() == MessagePayloadType.ARRAY_BUFFER
+                         && BoundaryInterfaceReflectionUtil.containsFeature(
+                                 mSupportedFeatures, Features.WEB_MESSAGE_ARRAY_BUFFER))) {
++            
++            SupportLibJsReplyProxyAdapter replyProxyAdapter =
++                    new SupportLibJsReplyProxyAdapter(replyProxy);
++
++                replyProxyAdapter.setWebViewId(this.webViewId);
+             mImpl.onPostMessage(
+                     mWebView,
+                     BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+@@ -73,7 +84,7 @@ class SupportLibWebMessageListenerAdapter implements WebMessageListener {
+                     sourceOrigin,
+                     isMainFrame,
+                     BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+-                            new SupportLibJsReplyProxyAdapter(replyProxy)));
++                            replyProxyAdapter));
+         } else {
+             Log.e(
+                     TAG,
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebSettingsAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebSettingsAdapter.java
+index cb8ce116c33c6..d692819b2430b 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebSettingsAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebSettingsAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import android.webkit.WebSettings;
+ 
+@@ -30,6 +31,7 @@ import java.util.Set;
+ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+     private static final String TAG = "SupportWebSettings";
+     private final AwSettings mAwSettings;
++    private String webViewId = null;
+ 
+     public SupportLibWebSettingsAdapter(AwSettings awSettings) {
+         mAwSettings = awSettings;
+@@ -41,6 +43,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_OFFSCREEN_PRE_RASTER")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_OFFSCREEN_PRE_RASTER);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_OFFSCREEN_PRE_RASTER, new Object[] {enabled});
+             mAwSettings.setOffscreenPreRaster(enabled);
+         }
+     }
+@@ -51,6 +54,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_OFFSCREEN_PRE_RASTER")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_OFFSCREEN_PRE_RASTER);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_OFFSCREEN_PRE_RASTER, new Object[] {});
+             return mAwSettings.getOffscreenPreRaster();
+         }
+     }
+@@ -61,6 +65,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_SAFE_BROWSING_ENABLED")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_SAFE_BROWSING_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_SAFE_BROWSING_ENABLED, new Object[] {enabled});
+             mAwSettings.setSafeBrowsingEnabled(enabled);
+         }
+     }
+@@ -71,6 +76,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_SAFE_BROWSING_ENABLED")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_SAFE_BROWSING_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_SAFE_BROWSING_ENABLED, new Object[] {});
+             return mAwSettings.getSafeBrowsingEnabled();
+         }
+     }
+@@ -81,6 +87,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_DISABLED_ACTION_MODE_MENU_ITEMS")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_DISABLED_ACTION_MODE_MENU_ITEMS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_DISABLED_ACTION_MODE_MENU_ITEMS, new Object[] {menuItems});
+             mAwSettings.setDisabledActionModeMenuItems(menuItems);
+         }
+     }
+@@ -91,6 +98,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_DISABLED_ACTION_MODE_MENU_ITEMS")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_DISABLED_ACTION_MODE_MENU_ITEMS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_DISABLED_ACTION_MODE_MENU_ITEMS, new Object[] {});
+             return mAwSettings.getDisabledActionModeMenuItems();
+         }
+     }
+@@ -101,6 +109,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_WILL_SUPPRESS_ERROR_PAGE")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_WILL_SUPPRESS_ERROR_PAGE);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_WILL_SUPPRESS_ERROR_PAGE, new Object[] {});
+             return mAwSettings.getWillSuppressErrorPage();
+         }
+     }
+@@ -111,6 +120,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_WILL_SUPPRESS_ERROR_PAGE")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_WILL_SUPPRESS_ERROR_PAGE);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_WILL_SUPPRESS_ERROR_PAGE, new Object[] {suppressed});
+             mAwSettings.setWillSuppressErrorPage(suppressed);
+         }
+     }
+@@ -124,6 +134,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.WEB_SETTINGS_SET_FORCE_DARK")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_FORCE_DARK);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_FORCE_DARK, new Object[] {forceDarkMode});
+             mAwSettings.setForceDarkMode(forceDarkMode);
+         }
+     }
+@@ -133,6 +144,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.WEB_SETTINGS_GET_FORCE_DARK")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_FORCE_DARK);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_FORCE_DARK, new Object[] {});
+             if (AwDarkMode.isSimplifiedDarkModeEnabled()) {
+                 Log.w(TAG, "getForceDark() is a no-op in an app with targetSdkVersion>=T");
+                 return WebSettings.FORCE_DARK_AUTO;
+@@ -147,6 +159,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_FORCE_DARK_BEHAVIOR")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_FORCE_DARK_BEHAVIOR);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_FORCE_DARK_BEHAVIOR, new Object[] {forceDarkBehavior});
+             if (AwDarkMode.isSimplifiedDarkModeEnabled()) {
+                 Log.w(TAG, "setForceDarkBehavior() is a no-op in an app with targetSdkVersion>=T");
+                 return;
+@@ -171,6 +184,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_FORCE_DARK_BEHAVIOR")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_FORCE_DARK_BEHAVIOR);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_FORCE_DARK_BEHAVIOR, new Object[] {});
+             if (AwDarkMode.isSimplifiedDarkModeEnabled()) {
+                 Log.w(TAG, "getForceDarkBehavior() is a no-op in an app with targetSdkVersion>=T");
+                 return ForceDarkBehavior.PREFER_MEDIA_QUERY_OVER_FORCE_DARK;
+@@ -193,6 +207,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_ALGORITHMIC_DARKENING_ALLOWED")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_ALGORITHMIC_DARKENING_ALLOWED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_ALGORITHMIC_DARKENING_ALLOWED, new Object[] {allow});
+             if (!AwDarkMode.isSimplifiedDarkModeEnabled()) {
+                 Log.w(
+                         TAG,
+@@ -210,6 +225,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_IS_ALGORITHMIC_DARKENING_ALLOWED")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_IS_ALGORITHMIC_DARKENING_ALLOWED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_IS_ALGORITHMIC_DARKENING_ALLOWED, new Object[] {});
+             if (!AwDarkMode.isSimplifiedDarkModeEnabled()) {
+                 Log.w(
+                         TAG,
+@@ -226,6 +242,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.WEB_SETTINGS_SET_WEBAUTHN_SUPPORT")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_WEBAUTHN_SUPPORT);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_WEBAUTHN_SUPPORT, new Object[] {support});
+             switch (support) {
+                 case WebauthnSupport.NONE:
+                     mAwSettings.setWebauthnSupport(WebauthnMode.NONE);
+@@ -248,6 +265,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.WEB_SETTINGS_GET_WEBAUTHN_SUPPORT")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_WEBAUTHN_SUPPORT);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_WEBAUTHN_SUPPORT, new Object[] {});
+             switch (mAwSettings.getWebauthnSupport()) {
+                 case WebauthnMode.NONE:
+                     return WebauthnSupport.NONE;
+@@ -267,6 +285,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST, new Object[] {allowedOriginRules});
+             mAwSettings.setRequestedWithHeaderOriginAllowList(allowedOriginRules);
+         }
+     }
+@@ -277,6 +296,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_REQUESTED_WITH_HEADER_ORIGIN_ALLOWLIST, new Object[] {});
+             return mAwSettings.getRequestedWithHeaderOriginAllowList();
+         }
+     }
+@@ -288,6 +308,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_ENTERPRISE_AUTHENTICATION_APP_LINK_POLICY_ENABLED")) {
+             recordApiCall(
+                     ApiCall.WEB_SETTINGS_SET_ENTERPRISE_AUTHENTICATION_APP_LINK_POLICY_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_ENTERPRISE_AUTHENTICATION_APP_LINK_POLICY_ENABLED, new Object[] {enabled});
+             mAwSettings.setEnterpriseAuthenticationAppLinkPolicyEnabled(enabled);
+         }
+     }
+@@ -299,6 +320,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_ENTERPRISE_AUTHENTICATION_APP_LINK_POLICY_ENABLED")) {
+             recordApiCall(
+                     ApiCall.WEB_SETTINGS_GET_ENTERPRISE_AUTHENTICATION_APP_LINK_POLICY_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_ENTERPRISE_AUTHENTICATION_APP_LINK_POLICY_ENABLED, new Object[] {});
+             return mAwSettings.getEnterpriseAuthenticationAppLinkPolicyEnabled();
+         }
+     }
+@@ -309,6 +331,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_SET_USER_AGENT_METADATA")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_SET_USER_AGENT_METADATA);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_SET_USER_AGENT_METADATA, new Object[] {uaMetadata});
+             mAwSettings.setUserAgentMetadataFromMap(uaMetadata);
+         }
+     }
+@@ -319,6 +342,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.WEB_SETTINGS_GET_USER_AGENT_METADATA")) {
+             recordApiCall(ApiCall.WEB_SETTINGS_GET_USER_AGENT_METADATA);
++            recordSupportLibApiCall(this.webViewId, ApiCall.WEB_SETTINGS_GET_USER_AGENT_METADATA, new Object[] {});
+             return mAwSettings.getUserAgentMetadataMap();
+         }
+     }
+@@ -328,6 +352,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_ATTRIBUTION_BEHAVIOR")) {
+             recordApiCall(ApiCall.SET_ATTRIBUTION_BEHAVIOR);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_ATTRIBUTION_BEHAVIOR, new Object[] {behavior});
+             switch (behavior) {
+                 case AttributionBehavior.DISABLED:
+                     mAwSettings.setAttributionBehavior(AwSettings.ATTRIBUTION_DISABLED);
+@@ -353,6 +378,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_ATTRIBUTION_BEHAVIOR")) {
+             recordApiCall(ApiCall.GET_ATTRIBUTION_BEHAVIOR);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_ATTRIBUTION_BEHAVIOR, new Object[] {});
+             switch (mAwSettings.getAttributionBehavior()) {
+                 case AwSettings.ATTRIBUTION_DISABLED:
+                     return AttributionBehavior.DISABLED;
+@@ -375,7 +401,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.SET_WEBVIEW_MEDIA_INTEGRITY_API_STATUS")) {
+             recordApiCall(ApiCall.SET_WEBVIEW_MEDIA_INTEGRITY_API_STATUS);
+-
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_WEBVIEW_MEDIA_INTEGRITY_API_STATUS, new Object[] {defaultStatus, permissionConfig});
+             Map<String, @MediaIntegrityApiStatus Integer> permissionToApiStatus = new HashMap<>();
+             for (Map.Entry<String, @WebViewMediaIntegrityApiStatus Integer> entry :
+                     permissionConfig.entrySet()) {
+@@ -392,6 +418,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.GET_WEBVIEW_MEDIA_INTEGRITY_API_DEFAULT_STATUS")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_MEDIA_INTEGRITY_API_DEFAULT_STATUS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_WEBVIEW_MEDIA_INTEGRITY_API_DEFAULT_STATUS, new Object[] {});
+             return convertFromApiStatus(mAwSettings.getWebViewIntegrityApiDefaultStatus());
+         }
+     }
+@@ -445,6 +472,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_SPECULATIVE_LOADING_ENABLED")) {
+             recordApiCall(ApiCall.SET_SPECULATIVE_LOADING_STATUS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_SPECULATIVE_LOADING_STATUS, new Object[] {speculativeLoadingStatus});
+             switch (speculativeLoadingStatus) {
+                 case SpeculativeLoadingStatus.DISABLED:
+                     mAwSettings.setSpeculativeLoadingAllowed(
+@@ -463,7 +491,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.IS_SPECULATIVE_LOADING_ENABLED")) {
+             recordApiCall(ApiCall.GET_SPECULATIVE_LOADING_STATUS);
+-
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_SPECULATIVE_LOADING_STATUS, new Object[] {});
+             switch (mAwSettings.getSpeculativeLoadingAllowed()) {
+                 case SpeculativeLoadingAllowedFlags.SPECULATIVE_LOADING_DISABLED:
+                     return SpeculativeLoadingStatus.DISABLED;
+@@ -480,6 +508,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_BACK_FORWARD_CACHE_ENABLED")) {
+             recordApiCall(ApiCall.SET_BACK_FORWARD_CACHE_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_BACK_FORWARD_CACHE_ENABLED, new Object[] {backForwardCacheEnabled});
+             mAwSettings.setBackForwardCacheEnabled(backForwardCacheEnabled);
+         }
+     }
+@@ -489,6 +518,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_BACK_FORWARD_CACHE_ENABLED")) {
+             recordApiCall(ApiCall.GET_BACK_FORWARD_CACHE_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_BACK_FORWARD_CACHE_ENABLED, new Object[] {});
+             return mAwSettings.getBackForwardCacheEnabled();
+         }
+     }
+@@ -499,6 +529,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_BACK_FORWARD_CACHE_SETTINGS")) {
+             recordApiCall(ApiCall.SET_BACK_FORWARD_CACHE_SETTINGS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_BACK_FORWARD_CACHE_SETTINGS, new Object[] {backForwardCacheSettings});
+             WebViewBackForwardCacheSettingsBoundaryInterface boundaryInterface =
+                     BoundaryInterfaceReflectionUtil.castToSuppLibClass(
+                             WebViewBackForwardCacheSettingsBoundaryInterface.class,
+@@ -515,6 +546,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_BACK_FORWARD_CACHE_SETTINGS")) {
+             recordApiCall(ApiCall.GET_BACK_FORWARD_CACHE_SETTINGS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_BACK_FORWARD_CACHE_SETTINGS, new Object[] {});
+             return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+                     new SupportLibWebViewBackForwardCacheSettingsAdapter(
+                             mAwSettings.getBackForwardCacheSettings()));
+@@ -526,6 +558,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_PAYMENT_REQUEST_ENABLED")) {
+             recordApiCall(ApiCall.SET_PAYMENT_REQUEST_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_PAYMENT_REQUEST_ENABLED, new Object[] {enabled});
+             mAwSettings.setPaymentRequestEnabled(enabled);
+         }
+     }
+@@ -535,6 +568,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_PAYMENT_REQUEST_ENABLED")) {
+             recordApiCall(ApiCall.GET_PAYMENT_REQUEST_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_PAYMENT_REQUEST_ENABLED, new Object[] {});
+             return mAwSettings.getPaymentRequestEnabled();
+         }
+     }
+@@ -544,6 +578,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_HAS_ENROLLED_INSTRUMENT_ENABLED")) {
+             recordApiCall(ApiCall.SET_HAS_ENROLLED_INSTRUMENT_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_HAS_ENROLLED_INSTRUMENT_ENABLED, new Object[] {enabled});
+             mAwSettings.setHasEnrolledInstrumentEnabled(enabled);
+         }
+     }
+@@ -553,6 +588,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_HAS_ENROLLED_INSTRUMENT_ENABLED")) {
+             recordApiCall(ApiCall.GET_HAS_ENROLLED_INSTRUMENT_ENABLED);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_HAS_ENROLLED_INSTRUMENT_ENABLED, new Object[] {});
+             return mAwSettings.getHasEnrolledInstrumentEnabled();
+         }
+     }
+@@ -562,6 +598,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_INCLUDE_COOKIES_ON_INTERCEPT")) {
+             recordApiCall(ApiCall.SET_INCLUDE_COOKIES_ON_INTERCEPT);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_INCLUDE_COOKIES_ON_INTERCEPT, new Object[] {includeCookiesOnIntercept});
+             mAwSettings.setIncludeCookiesOnIntercept(includeCookiesOnIntercept);
+         }
+     }
+@@ -571,6 +608,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_INCLUDE_COOKIES_ON_INTERCEPT")) {
+             recordApiCall(ApiCall.GET_INCLUDE_COOKIES_ON_INTERCEPT);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_INCLUDE_COOKIES_ON_INTERCEPT, new Object[] {});
+             return mAwSettings.getIncludeCookiesOnIntercept();
+         }
+     }
+@@ -580,6 +618,7 @@ class SupportLibWebSettingsAdapter implements WebSettingsBoundaryInterface {
+         try (TraceEvent ignored =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_HYPERLINK_CONTEXT_MENU_ITEMS")) {
+             recordApiCall(ApiCall.SET_HYPERLINK_CONTEXT_MENU_ITEMS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.SET_HYPERLINK_CONTEXT_MENU_ITEMS, new Object[] {hyperlinkMenuItems});
+ 
+             int awMenuItems = AwSettings.HyperlinkContextMenuItems.DISABLED;
+ 
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewBackForwardCacheSettingsAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewBackForwardCacheSettingsAdapter.java
+index 5d9ade679d60c..ea1407b01b2b7 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewBackForwardCacheSettingsAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewBackForwardCacheSettingsAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.AwBackForwardCacheSettings;
+ import org.chromium.android_webview.AwSupportLibIsomorphic;
+@@ -23,6 +24,8 @@ class SupportLibWebViewBackForwardCacheSettingsAdapter extends IsomorphicAdapter
+         implements WebViewBackForwardCacheSettingsBoundaryInterface {
+     private final AwBackForwardCacheSettings mAwBackForwardCacheSettings;
+ 
++    private String NONE = null;
++
+     SupportLibWebViewBackForwardCacheSettingsAdapter(AwBackForwardCacheSettings settings) {
+         mAwBackForwardCacheSettings = settings;
+     }
+@@ -45,6 +48,7 @@ class SupportLibWebViewBackForwardCacheSettingsAdapter extends IsomorphicAdapter
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.BACK_FORWARD_CACHE_SETTINGS_GET_TIMEOUT_IN_SECONDS")) {
+             recordApiCall(ApiCall.BACK_FORWARD_CACHE_SETTINGS_GET_TIMEOUT_IN_SECONDS);
++            recordSupportLibApiCall(NONE, ApiCall.BACK_FORWARD_CACHE_SETTINGS_GET_TIMEOUT_IN_SECONDS, new Object[] {});
+             return mAwBackForwardCacheSettings.getTimeoutInSeconds();
+         }
+     }
+@@ -55,6 +59,7 @@ class SupportLibWebViewBackForwardCacheSettingsAdapter extends IsomorphicAdapter
+                 TraceEvent.scoped(
+                         "WebView.APICall.AndroidX.BACK_FORWARD_CACHE_SETTINGS_GET_MAX_PAGES_IN_CACHE")) {
+             recordApiCall(ApiCall.BACK_FORWARD_CACHE_SETTINGS_GET_MAX_PAGES_IN_CACHE);
++            recordSupportLibApiCall(NONE, ApiCall.BACK_FORWARD_CACHE_SETTINGS_GET_MAX_PAGES_IN_CACHE, new Object[] {});
+             return mAwBackForwardCacheSettings.getMaxPagesInCache();
+         }
+     }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromium.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromium.java
+index 4d8acbd94c434..58b7fb83e7084 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromium.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromium.java
+@@ -21,6 +21,9 @@ import com.android.webview.chromium.SharedWebViewChromium;
+ import com.android.webview.chromium.SharedWebViewRendererClientAdapter;
+ import com.android.webview.chromium.WebkitToSharedGlueConverter;
+ 
++import static com.android.webview.chromium.SharedWebViewChromium.recordInit;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
++
+ import org.chromium.android_webview.AwContents;
+ import org.chromium.android_webview.AwNavigationClient;
+ import org.chromium.android_webview.common.Lifetime;
+@@ -51,18 +54,24 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     // WebView from being garbage collected.
+     private final WeakReference<WebView> mWebView;
+     private final WeakReference<SharedWebViewChromium> mSharedWebViewChromium;
++    private final String webViewId;
+ 
+     public SupportLibWebViewChromium(WebView webView) {
+         mWebView = new WeakReference<>(webView);
+         mSharedWebViewChromium =
+                 new WeakReference<>(WebkitToSharedGlueConverter.getSharedWebViewChromium(webView));
++        // create a UUID for this WebView instance to track API calls
++        this.webViewId = java.util.UUID.randomUUID().toString();
+     }
+ 
++
+     @Override
+     public void insertVisualStateCallback(long requestId, InvocationHandler callbackInvoHandler) {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.INSERT_VISUAL_STATE_CALLBACK")) {
+             recordApiCall(ApiCall.INSERT_VISUAL_STATE_CALLBACK);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.INSERT_VISUAL_STATE_CALLBACK, new Object[] {requestId, callbackInvoHandler});
+             final VisualStateCallbackBoundaryInterface visualStateCallback =
+                     BoundaryInterfaceReflectionUtil.castToSuppLibClass(
+                             VisualStateCallbackBoundaryInterface.class, callbackInvoHandler);
+@@ -88,6 +97,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.CREATE_WEB_MESSAGE_CHANNEL")) {
+             recordApiCall(ApiCall.CREATE_WEB_MESSAGE_CHANNEL);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.CREATE_WEB_MESSAGE_CHANNEL, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -104,6 +115,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.POST_MESSAGE_TO_MAIN_FRAME")) {
+             recordApiCall(ApiCall.POST_MESSAGE_TO_MAIN_FRAME);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.POST_MESSAGE_TO_MAIN_FRAME, new Object[] {message, targetOrigin});
+             WebMessageBoundaryInterface messageBoundaryInterface =
+                     BoundaryInterfaceReflectionUtil.castToSuppLibClass(
+                             WebMessageBoundaryInterface.class, message);
+@@ -129,16 +142,21 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.ADD_WEB_MESSAGE_LISTENER")) {
+             recordApiCall(ApiCall.ADD_WEB_MESSAGE_LISTENER);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.ADD_WEB_MESSAGE_LISTENER, new Object[] {jsObjectName, allowedOriginRules, listener});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             WebView webView = mWebView.get();
+             if (sharedWebViewChromium == null || webView == null) {
+                 throw new IllegalStateException(
+                         "Support lib method called on WebView that no longer exists.");
+             }
++            SupportLibWebMessageListenerAdapter adapter =
++                    new SupportLibWebMessageListenerAdapter(webView, listener);
++            adapter.setWebViewId(this.webViewId);
+             sharedWebViewChromium.addWebMessageListener(
+                     jsObjectName,
+                     allowedOriginRules,
+-                    new SupportLibWebMessageListenerAdapter(webView, listener));
++                    adapter);
+         }
+     }
+ 
+@@ -147,6 +165,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.REMOVE_WEB_MESSAGE_LISTENER")) {
+             recordApiCall(ApiCall.REMOVE_WEB_MESSAGE_LISTENER);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.REMOVE_WEB_MESSAGE_LISTENER, new Object[] {jsObjectName});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -162,15 +182,19 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.ADD_DOCUMENT_START_SCRIPT")) {
+             recordApiCall(ApiCall.ADD_DOCUMENT_START_SCRIPT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.ADD_DOCUMENT_START_SCRIPT, new Object[] {script, allowedOriginRules});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+                         "Support lib method called on WebView that no longer exists.");
+             }
+-            return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
++            SupportLibScriptHandlerAdapter adapter =
+                     new SupportLibScriptHandlerAdapter(
+                             sharedWebViewChromium.addDocumentStartJavaScript(
+-                                    script, allowedOriginRules)));
++                                    script, allowedOriginRules));
++            adapter.setWebViewId(this.webViewId);
++            return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(adapter);
+         }
+     }
+ 
+@@ -178,6 +202,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     public WebViewClient getWebViewClient() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBVIEW_CLIENT")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_CLIENT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.GET_WEBVIEW_CLIENT, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -192,6 +218,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBCHROME_CLIENT")) {
+             recordApiCall(ApiCall.GET_WEBCHROME_CLIENT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.GET_WEBCHROME_CLIENT, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -206,6 +234,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBVIEW_RENDERER")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_RENDERER);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.GET_WEBVIEW_RENDERER, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -221,6 +251,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBVIEW_RENDERER_CLIENT")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_RENDERER_CLIENT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.GET_WEBVIEW_RENDERER_CLIENT, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -240,6 +272,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_WEBVIEW_RENDERER_CLIENT")) {
+             recordApiCall(ApiCall.SET_WEBVIEW_RENDERER_CLIENT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SET_WEBVIEW_RENDERER_CLIENT, new Object[] {webViewRendererClient});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -256,6 +290,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     public void setProfile(String profileName) {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.SET_WEBVIEW_PROFILE")) {
+             recordApiCall(ApiCall.SET_WEBVIEW_PROFILE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SET_WEBVIEW_PROFILE, new Object[] {profileName});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -269,6 +305,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     public /* Profile */ InvocationHandler getProfile() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBVIEW_PROFILE")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_PROFILE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.GET_WEBVIEW_PROFILE, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -283,6 +321,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     public void setAudioMuted(boolean muted) {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.SET_AUDIO_MUTED")) {
+             recordApiCall(ApiCall.SET_AUDIO_MUTED);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SET_AUDIO_MUTED, new Object[] {muted});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -296,6 +336,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     public boolean isAudioMuted() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.IS_AUDIO_MUTED")) {
+             recordApiCall(ApiCall.IS_AUDIO_MUTED);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.IS_AUDIO_MUTED, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -314,6 +356,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+             ValueCallback<Throwable> errorCallback) {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.PRERENDER_URL")) {
+             recordApiCall(ApiCall.PRERENDER_URL);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.PRERENDER_URL, new Object[] {url, cancellationSignal, callbackExecutor, activationCallback, errorCallback});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -344,6 +388,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.PRERENDER_URL_WITH_PARAMS")) {
+             recordApiCall(ApiCall.PRERENDER_URL_WITH_PARAMS);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.PRERENDER_URL_WITH_PARAMS, new Object[] {url, cancellationSignal, callbackExecutor, speculativeLoadingParameters, activationCallback, errorCallback});
+             SpeculativeLoadingParametersBoundaryInterface
+                     speculativeLoadingParametersBoundaryInterface =
+                             BoundaryInterfaceReflectionUtil.castToSuppLibClass(
+@@ -375,6 +421,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+     public void saveState(Bundle outState, int maxSize, boolean includeForwardState) {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.SAVE_STATE")) {
+             recordApiCall(ApiCall.SAVE_STATE);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SAVE_STATE, new Object[] {outState, maxSize, includeForwardState});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -390,6 +438,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBVIEW_NAVIGATION_CLIENT")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_NAVIGATION_CLIENT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.GET_WEBVIEW_NAVIGATION_CLIENT, new Object[] {});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+@@ -410,6 +460,8 @@ class SupportLibWebViewChromium implements WebViewProviderBoundaryInterface {
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.SET_WEBVIEW_NAVIGATION_CLIENT")) {
+             recordApiCall(ApiCall.SET_WEBVIEW_NAVIGATION_CLIENT);
++            recordSupportLibApiCall(
++                    this.webViewId, ApiCall.SET_WEBVIEW_NAVIGATION_CLIENT, new Object[] {webViewNavigationClient});
+             SharedWebViewChromium sharedWebViewChromium = mSharedWebViewChromium.get();
+             if (sharedWebViewChromium == null) {
+                 throw new IllegalStateException(
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromiumFactory.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromiumFactory.java
+index cabc52d3cb27c..c4659f0e9d41f 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromiumFactory.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewChromiumFactory.java
+@@ -33,6 +33,9 @@ import org.chromium.support_lib_boundary.WebViewStartUpConfigBoundaryInterface;
+ import org.chromium.support_lib_boundary.util.BoundaryInterfaceReflectionUtil;
+ import org.chromium.support_lib_boundary.util.Features;
+ 
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
++
++
+ import java.lang.reflect.InvocationHandler;
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -41,6 +44,8 @@ import java.util.Set;
+ /** Support library glue version of WebViewChromiumFactoryProvider. */
+ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryBoundaryInterface {
+     // SupportLibWebkitToCompatConverterAdapter
++    private String webViewId = null;
++
+     private final InvocationHandler mCompatConverterAdapter;
+     private final WebViewChromiumAwInit mAwInit;
+     private static final String[] sWebViewSupportedFeatures =
+@@ -504,6 +509,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+     public /* WebViewBuilderBoundaryInterface */ InvocationHandler getWebViewBuilder() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.GET_WEBVIEW_BUILDER")) {
+             recordApiCall(ApiCall.GET_WEBVIEW_BUILDER);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_WEBVIEW_BUILDER, new Object[] {});
+             return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+                     new SupportLibWebViewBuilderAdapter());
+         }
+@@ -513,6 +519,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+     public /* WebViewProvider */ InvocationHandler createWebView(WebView webView) {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.CREATE_WEBVIEW")) {
+             recordApiCall(ApiCall.CREATE_WEBVIEW);
++            recordSupportLibApiCall(this.webViewId, ApiCall.CREATE_WEBVIEW, new Object[] {webView});
+             return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+                     new SupportLibWebViewChromium(webView));
+         }
+@@ -525,6 +532,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+ 
+     private static class StaticsAdapter implements StaticsBoundaryInterface {
+         private final SharedStatics mSharedStatics;
++        private String webViewId = null;
+ 
+         public StaticsAdapter(SharedStatics sharedStatics) {
+             mSharedStatics = sharedStatics;
+@@ -535,6 +543,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.AndroidX.INIT_SAFE_BROWSING")) {
+                 recordApiCall(ApiCall.INIT_SAFE_BROWSING);
++                recordSupportLibApiCall(this.webViewId, ApiCall.INIT_SAFE_BROWSING, new Object[] {context, callback});
+                 mSharedStatics.initSafeBrowsing(
+                         context, CallbackConverter.fromValueCallback(callback));
+             }
+@@ -545,6 +554,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.AndroidX.SET_SAFE_BROWSING_ALLOWLIST")) {
+                 recordApiCall(ApiCall.SET_SAFE_BROWSING_ALLOWLIST);
++                recordSupportLibApiCall(this.webViewId, ApiCall.SET_SAFE_BROWSING_ALLOWLIST, new Object[] {hosts, callback});
+                 mSharedStatics.setSafeBrowsingAllowlist(
+                         new ArrayList<>(hosts), CallbackConverter.fromValueCallback(callback));
+             }
+@@ -556,6 +566,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+                     TraceEvent.scoped(
+                             "WebView.APICall.AndroidX.SET_SAFE_BROWSING_ALLOWLIST_DEPRECATED_NAME")) {
+                 recordApiCall(ApiCall.SET_SAFE_BROWSING_ALLOWLIST_DEPRECATED_NAME);
++                recordSupportLibApiCall(this.webViewId, ApiCall.SET_SAFE_BROWSING_ALLOWLIST_DEPRECATED_NAME, new Object[] {hosts, callback});
+                 mSharedStatics.setSafeBrowsingAllowlist(
+                         hosts, CallbackConverter.fromValueCallback(callback));
+             }
+@@ -567,6 +578,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+                     TraceEvent.scoped(
+                             "WebView.APICall.AndroidX.GET_SAFE_BROWSING_PRIVACY_POLICY_URL")) {
+                 recordApiCall(ApiCall.GET_SAFE_BROWSING_PRIVACY_POLICY_URL);
++                recordSupportLibApiCall(this.webViewId, ApiCall.GET_SAFE_BROWSING_PRIVACY_POLICY_URL, new Object[] {});
+                 return mSharedStatics.getSafeBrowsingPrivacyPolicyUrl();
+             }
+         }
+@@ -576,6 +588,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.AndroidX.IS_MULTI_PROCESS_ENABLED")) {
+                 recordApiCall(ApiCall.IS_MULTI_PROCESS_ENABLED);
++                recordSupportLibApiCall(this.webViewId, ApiCall.IS_MULTI_PROCESS_ENABLED, new Object[] {});
+                 return mSharedStatics.isMultiProcessEnabled();
+             }
+         }
+@@ -585,6 +598,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.AndroidX.GET_VARIATIONS_HEADER")) {
+                 recordApiCall(ApiCall.GET_VARIATIONS_HEADER);
++                recordSupportLibApiCall(this.webViewId, ApiCall.GET_VARIATIONS_HEADER, new Object[] {});
+                 return mSharedStatics.getVariationsHeader();
+             }
+         }
+@@ -594,6 +608,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.AndroidX.SET_DEFAULT_TRAFFICSTATS_TAG")) {
+                 recordApiCall(ApiCall.SET_DEFAULT_TRAFFICSTATS_TAG);
++                recordSupportLibApiCall(this.webViewId, ApiCall.SET_DEFAULT_TRAFFICSTATS_TAG, new Object[] {tag});
+                 mSharedStatics.setDefaultTrafficStatsTag(tag);
+             }
+         }
+@@ -603,6 +618,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             try (TraceEvent event =
+                     TraceEvent.scoped("WebView.APICall.AndroidX.SET_DEFAULT_TRAFFICSTATS_UID")) {
+                 recordApiCall(ApiCall.SET_DEFAULT_TRAFFICSTATS_UID);
++                recordSupportLibApiCall(this.webViewId, ApiCall.SET_DEFAULT_TRAFFICSTATS_UID, new Object[] {uid});
+                 mSharedStatics.setDefaultTrafficStatsUid(uid);
+             }
+         }
+@@ -612,6 +628,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+     public InvocationHandler getStatics() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.GET_STATICS")) {
+             recordApiCall(ApiCall.GET_STATICS);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_STATICS, new Object[] {});
+             return mStatics;
+         }
+     }
+@@ -630,6 +647,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_SERVICE_WORKER_CONTROLLER")) {
+             recordApiCall(ApiCall.GET_SERVICE_WORKER_CONTROLLER);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_SERVICE_WORKER_CONTROLLER, new Object[] {});
+             AwServiceWorkerController serviceWorkerController =
+                     mAwInit.getDefaultProfile(CallSite.GET_DEFAULT_SERVICE_WORKER_CONTROLLER)
+                             .getBrowserContext()
+@@ -652,6 +670,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_TRACING_CONTROLLER")) {
+             recordApiCall(ApiCall.GET_TRACING_CONTROLLER);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_TRACING_CONTROLLER, new Object[] {});
+             AwTracingController tracingController = mAwInit.getAwTracingController();
+             synchronized (mAwInit.getLazyInitLock()) {
+                 if (mTracingController == null) {
+@@ -672,6 +691,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_PROXY_CONTROLLER")) {
+             recordApiCall(ApiCall.GET_PROXY_CONTROLLER);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_PROXY_CONTROLLER, new Object[] {});
+             AwProxyController proxyController = mAwInit.getAwProxyController();
+             synchronized (mAwInit.getLazyInitLock()) {
+                 if (mProxyController == null) {
+@@ -691,6 +711,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.GET_IMAGE_DRAG_DROP_IMPLEMENTATION")) {
+             recordApiCall(ApiCall.GET_IMAGE_DRAG_DROP_IMPLEMENTATION);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_IMAGE_DRAG_DROP_IMPLEMENTATION, new Object[] {});
+             synchronized (mAwInit.getLazyInitLock()) {
+                 if (mDropDataProvider == null) {
+                     mDropDataProvider =
+@@ -706,6 +727,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+     public InvocationHandler getProfileStore() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.GET_PROFILE_STORE")) {
+             recordApiCall(ApiCall.GET_PROFILE_STORE);
++            recordSupportLibApiCall(this.webViewId, ApiCall.GET_PROFILE_STORE, new Object[] {});
+             synchronized (mAwInit.getLazyInitLock()) {
+                 if (mProfileStore == null) {
+                     mProfileStore =
+@@ -724,6 +746,7 @@ public class SupportLibWebViewChromiumFactory implements WebViewProviderFactoryB
+             /* WebViewStartUpCallback */ InvocationHandler callbackInvoHandler) {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.START_UP_WEBVIEW")) {
+             recordApiCall(ApiCall.START_UP_WEBVIEW);
++            recordSupportLibApiCall(this.webViewId, ApiCall.START_UP_WEBVIEW, new Object[] {configInvoHandler, callbackInvoHandler});
+             final WebViewStartUpConfigBoundaryInterface webViewStartUpConfig =
+                     BoundaryInterfaceReflectionUtil.castToSuppLibClass(
+                             WebViewStartUpConfigBoundaryInterface.class, configInvoHandler);
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewCookieManagerAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewCookieManagerAdapter.java
+index ee02b4f902b7a..286c0b0c91730 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewCookieManagerAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewCookieManagerAdapter.java
+@@ -5,6 +5,7 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
+ 
+ import org.chromium.android_webview.AwCookieManager;
+ import org.chromium.base.TraceEvent;
+@@ -15,6 +16,7 @@ import java.util.List;
+ /** Adapter between WebViewCookieManagerBoundaryInterface and AwCookieManager. */
+ class SupportLibWebViewCookieManagerAdapter implements WebViewCookieManagerBoundaryInterface {
+     private final AwCookieManager mAwCookieManager;
++    private String NONE = null;
+ 
+     public SupportLibWebViewCookieManagerAdapter(AwCookieManager awCookieManager) {
+         mAwCookieManager = awCookieManager;
+@@ -25,6 +27,9 @@ class SupportLibWebViewCookieManagerAdapter implements WebViewCookieManagerBound
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.COOKIE_MANAGER_GET_COOKIE_INFO")) {
+             recordApiCall(SupportLibWebViewChromiumFactory.ApiCall.COOKIE_MANAGER_GET_COOKIE_INFO);
++            recordSupportLibApiCall(
++                    NONE, SupportLibWebViewChromiumFactory.ApiCall.COOKIE_MANAGER_GET_COOKIE_INFO,
++                    new Object[] {url});
+             return mAwCookieManager.getCookieInfo(url);
+         }
+     }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewNavigationAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewNavigationAdapter.java
+index b2c158f8f11c9..acdad02c05cb2 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewNavigationAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewNavigationAdapter.java
+@@ -5,6 +5,8 @@
+ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
++
+ 
+ import androidx.annotation.Nullable;
+ 
+@@ -27,6 +29,7 @@ import java.lang.reflect.InvocationHandler;
+ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         implements WebViewNavigationBoundaryInterface {
+     private final AwNavigation mNavigation;
++    private String NONE = null;
+ 
+     SupportLibWebViewNavigationAdapter(AwNavigation navigation) {
+         mNavigation = navigation;
+@@ -41,6 +44,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+     public String getUrl() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_GET_URL")) {
+             recordApiCall(ApiCall.NAVIGATION_GET_URL);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_GET_URL, new Object[] {});
+             return mNavigation.getUrl();
+         }
+     }
+@@ -50,6 +55,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_WAS_INITIATED_BY_PAGE")) {
+             recordApiCall(ApiCall.NAVIGATION_WAS_INITIATED_BY_PAGE);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_WAS_INITIATED_BY_PAGE, new Object[] {});
+             return mNavigation.wasInitiatedByPage();
+         }
+     }
+@@ -59,6 +66,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_IS_SAME_DOCUMENT")) {
+             recordApiCall(ApiCall.NAVIGATION_IS_SAME_DOCUMENT);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_IS_SAME_DOCUMENT, new Object[] {});
+             return mNavigation.isSameDocument();
+         }
+     }
+@@ -68,6 +77,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_IS_RELOAD")) {
+             recordApiCall(ApiCall.NAVIGATION_IS_RELOAD);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_IS_RELOAD, new Object[] {});
+             return mNavigation.isReload();
+         }
+     }
+@@ -77,6 +88,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_IS_HISTORY")) {
+             recordApiCall(ApiCall.NAVIGATION_IS_HISTORY);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_IS_HISTORY, new Object[] {});
+             return mNavigation.isHistory();
+         }
+     }
+@@ -86,6 +99,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_IS_RESTORE")) {
+             recordApiCall(ApiCall.NAVIGATION_IS_RESTORE);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_IS_RESTORE, new Object[] {});
+             return mNavigation.isRestore();
+         }
+     }
+@@ -94,6 +109,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+     public boolean isBack() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_IS_BACK")) {
+             recordApiCall(ApiCall.NAVIGATION_IS_BACK);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_IS_BACK, new Object[] {});
+             return mNavigation.isBack();
+         }
+     }
+@@ -103,6 +120,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_IS_FORWARD")) {
+             recordApiCall(ApiCall.NAVIGATION_IS_FORWARD);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_IS_FORWARD, new Object[] {});
+             return mNavigation.isForward();
+         }
+     }
+@@ -112,6 +131,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_DID_COMMIT")) {
+             recordApiCall(ApiCall.NAVIGATION_DID_COMMIT);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_DID_COMMIT, new Object[] {});
+             return mNavigation.didCommit();
+         }
+     }
+@@ -121,6 +142,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_DID_COMMIT_ERROR_PAGE")) {
+             recordApiCall(ApiCall.NAVIGATION_DID_COMMIT_ERROR_PAGE);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_DID_COMMIT_ERROR_PAGE, new Object[] {});
+             return mNavigation.didCommitErrorPage();
+         }
+     }
+@@ -130,6 +153,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_GET_STATUS_CODE")) {
+             recordApiCall(ApiCall.NAVIGATION_GET_STATUS_CODE);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_GET_STATUS_CODE, new Object[] {});
+             return mNavigation.getStatusCode();
+         }
+     }
+@@ -138,6 +163,8 @@ class SupportLibWebViewNavigationAdapter extends IsomorphicAdapter
+     public /* WebViewPage */ @Nullable InvocationHandler getPage() {
+         try (TraceEvent event = TraceEvent.scoped("WebView.APICall.AndroidX.NAVIGATION_GET_PAGE")) {
+             recordApiCall(ApiCall.NAVIGATION_GET_PAGE);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.NAVIGATION_GET_PAGE, new Object[] {});
+             return BoundaryInterfaceReflectionUtil.createInvocationHandlerFor(
+                     new SupportLibWebViewPageAdapter(mNavigation.getPage()));
+         }
+diff --git a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewRendererAdapter.java b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewRendererAdapter.java
+index 8774ab2ddeb2f..6844354d2d890 100644
+--- a/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewRendererAdapter.java
++++ b/android_webview/support_library/java/src/org/chromium/support_lib_glue/SupportLibWebViewRendererAdapter.java
+@@ -6,6 +6,8 @@ package org.chromium.support_lib_glue;
+ 
+ import static org.chromium.support_lib_glue.SupportLibWebViewChromiumFactory.recordApiCall;
+ 
++import static com.android.webview.chromium.SharedWebViewChromium.recordSupportLibApiCall;
++
+ import org.chromium.android_webview.AwRenderProcess;
+ import org.chromium.android_webview.AwSupportLibIsomorphic;
+ import org.chromium.android_webview.common.Lifetime;
+@@ -23,6 +25,8 @@ class SupportLibWebViewRendererAdapter extends IsomorphicAdapter
+         implements WebViewRendererBoundaryInterface {
+     private final AwRenderProcess mRenderer;
+ 
++    private String NONE = null;
++
+     SupportLibWebViewRendererAdapter(AwRenderProcess renderer) {
+         mRenderer = renderer;
+     }
+@@ -37,6 +41,8 @@ class SupportLibWebViewRendererAdapter extends IsomorphicAdapter
+         try (TraceEvent event =
+                 TraceEvent.scoped("WebView.APICall.AndroidX.WEBVIEW_RENDERER_TERMINATE")) {
+             recordApiCall(ApiCall.WEBVIEW_RENDERER_TERMINATE);
++            recordSupportLibApiCall(
++                    NONE, ApiCall.WEBVIEW_RENDERER_TERMINATE, new Object[] {});
+             return mRenderer.terminate();
+         }
+     }

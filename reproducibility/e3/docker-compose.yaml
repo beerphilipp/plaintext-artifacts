@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: webview_mongo
+    restart: unless-stopped
+    ports:
+      - "27019:27017"
+      - "8888:8888"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: webview_mongo_express
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: "27017"
+      ME_CONFIG_BASICAUTH: "false"
+
+  jupyter:
+    image: webview/jupyter
+    build:
+      context: ../../evaluation_scripts
+      dockerfile: Dockerfile
+    container_name: webview_jupyter
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    network_mode: "service:mongo"
+    volumes:
+      - ${GPLAY_SQLITE:?GPLAY_SQLITE must be set}:/data/gplay.sqlite:ro
+      - ~/.ssh/webview_key:/root/.ssh/webview_key:ro
+
+volumes:
+  mongo-data:
