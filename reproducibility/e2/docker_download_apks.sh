@@ -33,7 +33,7 @@ mkdir -p "$DEST_DIR"
 
 echo "Selecting $COUNT random APKs from $REMOTE ..."
 FULL_LIST=/tmp/all_apps.txt
-rsync -e "ssh -i $KEY -o StrictHostKeyChecking=accept-new" -dn \
+rsync -e "ssh -p 22111 -i $KEY -o StrictHostKeyChecking=accept-new" -dn \
     --out-format="%n" "$REMOTE" . > "$FULL_LIST"
 
 echo "Remote listing: $(wc -l < "$FULL_LIST") entries"
@@ -45,7 +45,7 @@ head -n "$COUNT" "$SHUFFLED" > "$APP_LIST"
 echo "Selected $(wc -l < "$APP_LIST") APKs"
 
 echo "Downloading $(wc -l < "$APP_LIST") APKs into $DEST_DIR ..."
-rsync -e "ssh -i $KEY -o StrictHostKeyChecking=accept-new" -avvxz \
+rsync -e "ssh -p 22111 -i $KEY -o StrictHostKeyChecking=accept-new" -avvxz \
     --progress \
     --files-from "$APP_LIST" \
     "$REMOTE" "$DEST_DIR"
