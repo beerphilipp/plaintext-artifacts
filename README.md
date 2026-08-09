@@ -2,7 +2,7 @@
 
 This repository contains the artifacts accompanying the USENIX Security '26 paper *Plain Text, Plain Risks: Measuring and Understanding HTTP Inclusion in Android WebViews at Scale*.
 
-The database snapshot (`mongodb_snapshot.zip`) and the Google Play crawl database (`gplay.sqlite.zip`) are published at <https://doi.org/110.5281/zenodo.20393171>.
+The database snapshot (`mongodb_snapshot.zip`) and the Google Play crawl database (`gplay.sqlite.zip`) are published at <https://doi.org/10.5281/zenodo.20393171>.
 
 ## Repository Structure
 
@@ -34,7 +34,7 @@ Each subdirectory contains its own `README.md` with detailed usage instructions.
    git clone https://github.com/beerphilipp/plaintext-artifacts.git
    ```
 
-2. **Download and extract the database snapshots** (`mongodb_snapshot.zip`, `gplay.sqlite.zip`) from <https://doi.org/110.5281/zenodo.20393171>.
+2. **Download and extract the database snapshots** (`mongodb_snapshot.zip`, `gplay.sqlite.zip`) from <https://doi.org/10.5281/zenodo.20393171>.
 
 3. **APK dataset access.** Due to the size of the dataset and legal/regulatory restrictions, the raw APKs cannot be publicly hosted. Reviewers received an SSH key; save it to `~/.ssh/webview_key` and run `chmod 600 ~/.ssh/webview_key`. Other researchers can request access by contacting the authors.
 
