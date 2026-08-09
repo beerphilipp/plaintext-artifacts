@@ -2,7 +2,7 @@
 
 This repository contains the artifacts accompanying the USENIX Security '26 paper *Plain Text, Plain Risks: Measuring and Understanding HTTP Inclusion in Android WebViews at Scale*.
 
-The companion database snapshot (`mongodb_snapshot.zip`) and the Google Play crawl database (`gplay.sqlite.zip`) are published separately at <https://doi.org/10.5281/zenodo.20758481>.
+The database snapshot (`mongodb_snapshot.zip`) and the Google Play crawl database (`gplay.sqlite.zip`) are published at <https://doi.org/110.5281/zenodo.20393171>.
 
 ## Repository Structure
 
@@ -15,7 +15,7 @@ The companion database snapshot (`mongodb_snapshot.zip`) and the Google Play cra
 | [`apk-download/`](./apk-download)                 | Modified `apkeep` used to crawl APKs from Google Play.                                                       | Section 4.1   |
 | [`evaluation_scripts/`](./evaluation_scripts)     | Jupyter notebooks that regenerate the macros, figures, and tables in Section 5 from the measurement database. | Section 5     |
 | [`survey/`](./survey)                             | Developer survey questionnaire.                                                                              | Section 7     |
-| [`reproducibility/`](./reproducibility)           | Driver scripts for the artifact-evaluation experiments E1–E3 plus `basic_test.sh`.                           | —             |
+| [`reproducibility/`](./reproducibility)           | Scripts for the artifact-evaluation experiments E1–E3 plus `basic_test.sh`.                                 | -             |
 
 Each subdirectory contains its own `README.md` with detailed usage instructions.
 
@@ -34,7 +34,7 @@ Each subdirectory contains its own `README.md` with detailed usage instructions.
    git clone https://github.com/beerphilipp/plaintext-artifacts.git
    ```
 
-2. **Download the database snapshots** (`mongodb_snapshot.zip`, `gplay.sqlite.zip`) from <https://doi.org/10.5281/zenodo.20758482> and extract them.
+2. **Download and extract the database snapshots** (`mongodb_snapshot.zip`, `gplay.sqlite.zip`) from <https://doi.org/110.5281/zenodo.20393171>.
 
 3. **APK dataset access.** Due to the size of the dataset and legal/regulatory restrictions, the raw APKs cannot be publicly hosted. Reviewers received an SSH key; save it to `~/.ssh/webview_key` and run `chmod 600 ~/.ssh/webview_key`. Other researchers can request access by contacting the authors.
 
